@@ -4,20 +4,20 @@
     "subtitle": "50-70% off on top fashion brands",
     "cta": "Shop Now",
     "href": "/category/sale",
-    "image": "https://images.unsplash.com/photo-1445205170230-053b83016050?w=1400&h=500&fit=crop&q=80"
+    "image": "/images/hero/sale.jpg"
   },
   {
     "title": "New Arrivals",
     "subtitle": "Fresh styles for Men & Women",
     "cta": "Explore",
     "href": "/category/women",
-    "image": "https://images.unsplash.com/photo-1490481651871-ab68de25d7d3?w=1400&h=500&fit=crop&q=80"
+    "image": "/images/hero/new.jpg"
   },
   {
     "title": "Ethnic Festive Edit",
     "subtitle": "Kurtas, sarees & more for every celebration",
     "cta": "Shop Ethnic",
     "href": "/category/ethnic",
-    "image": "https://images.unsplash.com/photo-1583391733981-5c33a765023d?w=1400&h=500&fit=crop&q=80"
+    "image": "/images/hero/ethnic.jpg"
   }
 ]
