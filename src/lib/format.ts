@@ -1,5 +1,5 @@
 /** Bump when product/category images change to bust CDN/browser cache on Hostinger. */
-const ASSET_VERSION = "2";
+const ASSET_VERSION = "3";
 
 export function assetUrl(path: string): string {
   if (!path || path.startsWith("http")) return path;

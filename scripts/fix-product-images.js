@@ -23,11 +23,9 @@ const IMAGES = {
 
   // Under ₹100 basics — unique images, no reuse of t-shirts/sweatshirts
   m006: U("photo-1586350977771-b3b0abd50c82"), // Men's ankle socks
-  m007: U("photo-1717585679395-bbe39b5fb6bc"), // Cotton handkerchiefs / fabric
   w006:
     "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=800&q=80&auto=format&fit=crop&hue=180",
-  w007: U("photo-1568371600021-36b968768c30"), // Hair scrunchies / colorful textiles
-  k003: U("photo-1556906781-9a412961c28c"), // Kids cotton socks
+  // k003, s004, w007, m007: run scripts/generate-basics-images.ps1 (stock photos mismatch)
 };
 
 const CATEGORY_IMAGES = {
