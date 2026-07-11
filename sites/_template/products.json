@@ -1,0 +1,19 @@
+[
+  {
+    "id": "t001",
+    "slug": "sample-product",
+    "name": "Sample Product",
+    "description": "Replace this with your product description. Edit sites/your-site/products.json to add your catalog.",
+    "price": 49.99,
+    "category": "all",
+    "images": ["https://picsum.photos/seed/sample-product/800/1000"],
+    "colors": ["Default"],
+    "sizes": ["One Size"],
+    "rating": 4.5,
+    "reviewCount": 10,
+    "featured": true,
+    "shipping": "Free standard shipping on orders over $50.",
+    "returns": "Free returns within 30 days.",
+    "createdAt": "2026-01-01"
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "title": "End of Season Sale",
+    "subtitle": "50-70% off on top fashion brands",
+    "cta": "Shop Now",
+    "href": "/category/sale",
+    "image": "https://picsum.photos/seed/treviqo-hero-sale/1400/500"
+  },
+  {
+    "title": "New Arrivals",
+    "subtitle": "Fresh styles for Men & Women",
+    "cta": "Explore",
+    "href": "/category/women",
+    "image": "https://picsum.photos/seed/treviqo-hero-new/1400/500"
+  },
+  {
+    "title": "Ethnic Festive Edit",
+    "subtitle": "Kurtas, sarees & more for every celebration",
+    "cta": "Shop Ethnic",
+    "href": "/category/ethnic",
+    "image": "https://picsum.photos/seed/treviqo-hero-ethnic/1400/500"
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "main": [
+    {
+      "label": "Shop All",
+      "href": "/category/all",
+      "children": [
+        { "label": "New Arrivals", "href": "/category/all" },
+        { "label": "Best Sellers", "href": "/category/all" }
+      ]
+    },
+    {
+      "label": "Sale",
+      "href": "/category/sale"
+    }
+  ],
+  "footer": [
+    {
+      "title": "Customer Service",
+      "links": [
+        { "label": "Contact Us", "href": "#" },
+        { "label": "Returns", "href": "#" },
+        { "label": "FAQ", "href": "#" }
+      ]
+    },
+    {
+      "title": "Company",
+      "links": [
+        { "label": "About Us", "href": "#" },
+        { "label": "Careers", "href": "#" }
+      ]
+    }
+  ]
+}

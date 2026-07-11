@@ -1,0 +1,14 @@
+{
+  "name": "Your Store Name",
+  "tagline": "Your store tagline here",
+  "promoBar": "Free shipping on orders $50+",
+  "freeShippingThreshold": 50,
+  "contact": {
+    "email": "support@yourstore.com",
+    "phone": "1-800-000-0000"
+  },
+  "social": {
+    "facebook": "https://facebook.com",
+    "instagram": "https://instagram.com"
+  }
+}

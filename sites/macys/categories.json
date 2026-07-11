@@ -1,0 +1,44 @@
+[
+  {
+    "slug": "women",
+    "name": "Women",
+    "description": "Discover the latest in women's fashion, from everyday essentials to statement pieces.",
+    "image": "https://picsum.photos/seed/women-cat/600/400",
+    "featured": true
+  },
+  {
+    "slug": "men",
+    "name": "Men",
+    "description": "Sharp suits, casual wear, and everything in between for the modern man.",
+    "image": "https://picsum.photos/seed/men-cat/600/400",
+    "featured": true
+  },
+  {
+    "slug": "kids",
+    "name": "Kids & Baby",
+    "description": "Adorable styles for little ones, from newborns to teens.",
+    "image": "https://picsum.photos/seed/kids-cat/600/400",
+    "featured": true
+  },
+  {
+    "slug": "home",
+    "name": "Home",
+    "description": "Transform your space with bedding, decor, kitchen essentials and more.",
+    "image": "https://picsum.photos/seed/home-cat/600/400",
+    "featured": true
+  },
+  {
+    "slug": "beauty",
+    "name": "Beauty",
+    "description": "Premium makeup, skincare, fragrance and hair care from top brands.",
+    "image": "https://picsum.photos/seed/beauty-cat/600/400",
+    "featured": true
+  },
+  {
+    "slug": "sale",
+    "name": "Sale",
+    "description": "Incredible deals on your favorite brands. Limited time only!",
+    "image": "https://picsum.photos/seed/sale-cat/600/400",
+    "featured": false
+  }
+]

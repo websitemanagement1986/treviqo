@@ -1,0 +1,12 @@
+{
+  "primary": "#FF3F6C",
+  "primaryDark": "#E8365F",
+  "accent": "#282C3F",
+  "background": "#FFFFFF",
+  "surface": "#F5F5F6",
+  "text": "#282C3F",
+  "textMuted": "#696B79",
+  "fontHeading": "'Segoe UI', system-ui, sans-serif",
+  "fontBody": "'Segoe UI', system-ui, -apple-system, sans-serif",
+  "borderRadius": "2px"
+}

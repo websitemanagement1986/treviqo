@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Spring Collection",
+    "subtitle": "Fresh styles for the new season",
+    "cta": "Shop Now",
+    "href": "/category/women",
+    "image": "https://picsum.photos/seed/hero-spring/1400/500"
+  },
+  {
+    "title": "Up to 50% Off Sale",
+    "subtitle": "Don't miss these incredible deals",
+    "cta": "Shop Sale",
+    "href": "/category/sale",
+    "image": "https://picsum.photos/seed/hero-sale/1400/500"
+  },
+  {
+    "title": "Home Refresh",
+    "subtitle": "Elevate every room in your home",
+    "cta": "Explore Home",
+    "href": "/category/home",
+    "image": "https://picsum.photos/seed/hero-home/1400/500"
+  }
+]

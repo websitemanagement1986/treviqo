@@ -1,0 +1,16 @@
+{
+  "name": "MetroStyle",
+  "tagline": "The Magic of Style",
+  "promoBar": "Free shipping on orders $50+ | Extra 20% off with code SAVE20",
+  "freeShippingThreshold": 50,
+  "contact": {
+    "email": "support@metrostyle.com",
+    "phone": "1-800-555-0199"
+  },
+  "social": {
+    "facebook": "https://facebook.com",
+    "instagram": "https://instagram.com",
+    "twitter": "https://twitter.com",
+    "pinterest": "https://pinterest.com"
+  }
+}

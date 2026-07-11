@@ -1,0 +1,89 @@
+{
+  "main": [
+    {
+      "label": "Men",
+      "href": "/category/men",
+      "children": [
+        { "label": "T-Shirts", "href": "/category/men" },
+        { "label": "Shirts", "href": "/category/men" },
+        { "label": "Jeans", "href": "/category/men" },
+        { "label": "Trousers", "href": "/category/men" },
+        { "label": "Jackets", "href": "/category/men" },
+        { "label": "Sneakers", "href": "/category/men" }
+      ]
+    },
+    {
+      "label": "Women",
+      "href": "/category/women",
+      "children": [
+        { "label": "Dresses", "href": "/category/women" },
+        { "label": "Tops", "href": "/category/women" },
+        { "label": "Kurtas", "href": "/category/women" },
+        { "label": "Jeans", "href": "/category/women" },
+        { "label": "Heels", "href": "/category/women" },
+        { "label": "Handbags", "href": "/category/women" }
+      ]
+    },
+    {
+      "label": "Kids",
+      "href": "/category/kids",
+      "children": [
+        { "label": "Boys Clothing", "href": "/category/kids" },
+        { "label": "Girls Clothing", "href": "/category/kids" },
+        { "label": "Footwear", "href": "/category/kids" }
+      ]
+    },
+    {
+      "label": "Ethnic",
+      "href": "/category/ethnic",
+      "children": [
+        { "label": "Kurtas & Suits", "href": "/category/ethnic" },
+        { "label": "Sarees", "href": "/category/ethnic" },
+        { "label": "Lehengas", "href": "/category/ethnic" }
+      ]
+    },
+    {
+      "label": "Sportswear",
+      "href": "/category/sportswear",
+      "children": [
+        { "label": "Active T-Shirts", "href": "/category/sportswear" },
+        { "label": "Track Pants", "href": "/category/sportswear" },
+        { "label": "Sports Shoes", "href": "/category/sportswear" }
+      ]
+    },
+    {
+      "label": "Sale",
+      "href": "/category/sale"
+    }
+  ],
+  "footer": [
+    {
+      "title": "Online Shopping",
+      "links": [
+        { "label": "Men", "href": "/category/men" },
+        { "label": "Women", "href": "/category/women" },
+        { "label": "Kids", "href": "/category/kids" },
+        { "label": "Ethnic Wear", "href": "/category/ethnic" }
+      ]
+    },
+    {
+      "title": "Customer Policies",
+      "links": [
+        { "label": "Contact Us", "href": "#" },
+        { "label": "FAQ", "href": "#" },
+        { "label": "T&C", "href": "#" },
+        { "label": "Track Orders", "href": "#" },
+        { "label": "Shipping", "href": "#" }
+      ]
+    },
+    {
+      "title": "Experience Treviqo",
+      "links": [
+        { "label": "Mobile App", "href": "#" },
+        { "label": "Gift Cards", "href": "#" },
+        { "label": "Careers", "href": "#" },
+        { "label": "Blog", "href": "#" }
+      ]
+    }
+  ]
+}

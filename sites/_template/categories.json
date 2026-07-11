@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "all",
+    "name": "Shop All",
+    "description": "Browse our full collection of products.",
+    "image": "https://picsum.photos/seed/all-cat/600/400",
+    "featured": true
+  },
+  {
+    "slug": "sale",
+    "name": "Sale",
+    "description": "Great deals on select items.",
+    "image": "https://picsum.photos/seed/sale-tpl/600/400",
+    "featured": false
+  }
+]

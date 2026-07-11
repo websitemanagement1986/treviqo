@@ -1,0 +1,12 @@
+{
+  "primary": "#2563EB",
+  "primaryDark": "#1D4ED8",
+  "accent": "#1E293B",
+  "background": "#FFFFFF",
+  "surface": "#F8FAFC",
+  "text": "#0F172A",
+  "textMuted": "#64748B",
+  "fontHeading": "system-ui, sans-serif",
+  "fontBody": "system-ui, -apple-system, sans-serif",
+  "borderRadius": "8px"
+}

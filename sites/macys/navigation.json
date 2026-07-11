@@ -1,0 +1,90 @@
+{
+  "main": [
+    {
+      "label": "Women",
+      "href": "/category/women",
+      "children": [
+        { "label": "Dresses", "href": "/category/women" },
+        { "label": "Tops & Blouses", "href": "/category/women" },
+        { "label": "Jeans & Pants", "href": "/category/women" },
+        { "label": "Shoes", "href": "/category/women" },
+        { "label": "Handbags", "href": "/category/women" }
+      ]
+    },
+    {
+      "label": "Men",
+      "href": "/category/men",
+      "children": [
+        { "label": "Shirts", "href": "/category/men" },
+        { "label": "Suits & Blazers", "href": "/category/men" },
+        { "label": "Pants", "href": "/category/men" },
+        { "label": "Shoes", "href": "/category/men" },
+        { "label": "Accessories", "href": "/category/men" }
+      ]
+    },
+    {
+      "label": "Kids & Baby",
+      "href": "/category/kids",
+      "children": [
+        { "label": "Girls", "href": "/category/kids" },
+        { "label": "Boys", "href": "/category/kids" },
+        { "label": "Baby", "href": "/category/kids" },
+        { "label": "Toys", "href": "/category/kids" }
+      ]
+    },
+    {
+      "label": "Home",
+      "href": "/category/home",
+      "children": [
+        { "label": "Bedding", "href": "/category/home" },
+        { "label": "Kitchen", "href": "/category/home" },
+        { "label": "Decor", "href": "/category/home" },
+        { "label": "Furniture", "href": "/category/home" }
+      ]
+    },
+    {
+      "label": "Beauty",
+      "href": "/category/beauty",
+      "children": [
+        { "label": "Makeup", "href": "/category/beauty" },
+        { "label": "Skincare", "href": "/category/beauty" },
+        { "label": "Fragrance", "href": "/category/beauty" },
+        { "label": "Hair Care", "href": "/category/beauty" }
+      ]
+    },
+    {
+      "label": "Sale",
+      "href": "/category/sale"
+    }
+  ],
+  "footer": [
+    {
+      "title": "Customer Service",
+      "links": [
+        { "label": "Contact Us", "href": "#" },
+        { "label": "Order Tracking", "href": "#" },
+        { "label": "Returns & Exchanges", "href": "#" },
+        { "label": "Shipping Info", "href": "#" },
+        { "label": "FAQ", "href": "#" }
+      ]
+    },
+    {
+      "title": "Our Company",
+      "links": [
+        { "label": "About Us", "href": "#" },
+        { "label": "Careers", "href": "#" },
+        { "label": "Press", "href": "#" },
+        { "label": "Sustainability", "href": "#" }
+      ]
+    },
+    {
+      "title": "Ways to Shop",
+      "links": [
+        { "label": "Store Locator", "href": "#" },
+        { "label": "Gift Cards", "href": "#" },
+        { "label": "Registry", "href": "#" },
+        { "label": "Mobile App", "href": "#" }
+      ]
+    }
+  ]
+}

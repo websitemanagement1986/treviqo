@@ -1,0 +1,44 @@
+[
+  {
+    "slug": "men",
+    "name": "Men",
+    "description": "Trending shirts, jeans, jackets and footwear for men.",
+    "image": "https://picsum.photos/seed/treviqo-men/600/800",
+    "featured": true
+  },
+  {
+    "slug": "women",
+    "name": "Women",
+    "description": "Dresses, tops, ethnic wear and accessories for every occasion.",
+    "image": "https://picsum.photos/seed/treviqo-women/600/800",
+    "featured": true
+  },
+  {
+    "slug": "kids",
+    "name": "Kids",
+    "description": "Comfortable and stylish clothing for boys and girls.",
+    "image": "https://picsum.photos/seed/treviqo-kids/600/800",
+    "featured": true
+  },
+  {
+    "slug": "ethnic",
+    "name": "Ethnic Wear",
+    "description": "Kurtas, sarees, lehengas and festive collections.",
+    "image": "https://picsum.photos/seed/treviqo-ethnic/600/800",
+    "featured": true
+  },
+  {
+    "slug": "sportswear",
+    "name": "Sportswear",
+    "description": "Activewear and sports shoes for your fitness goals.",
+    "image": "https://picsum.photos/seed/treviqo-sport/600/800",
+    "featured": true
+  },
+  {
+    "slug": "sale",
+    "name": "Sale",
+    "description": "Best deals on top brands. Limited period offers.",
+    "image": "https://picsum.photos/seed/treviqo-sale/600/800",
+    "featured": false
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "name": "Treviqo",
+  "tagline": "Fashion. Lifestyle. You.",
+  "promoBar": "Free delivery on orders above ₹499 | New styles added daily",
+  "freeShippingThreshold": 499,
+  "contact": {
+    "email": "support@treviqo.com",
+    "phone": "1800-123-4567"
+  },
+  "social": {
+    "facebook": "https://facebook.com",
+    "instagram": "https://instagram.com",
+    "twitter": "https://twitter.com"
+  }
+}
