@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
@@ -45,7 +46,7 @@ export function CheckoutForm() {
     return (
       <div className="text-center py-12">
         <p className="text-lg mb-4">Your bag is empty.</p>
-        <a href="/" className="btn-primary">Continue Shopping</a>
+        <Link href="/" className="btn-primary">Continue Shopping</Link>
       </div>
     );
   }
