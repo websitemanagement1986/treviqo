@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "verify-images": "node scripts/verify-images.js",
-    "generate-basics-images": "powershell -ExecutionPolicy Bypass -File scripts/generate-basics-images.ps1"
+    "generate-basics-images": "powershell -ExecutionPolicy Bypass -File scripts/generate-basics-images.ps1",
+    "download-basics-images": "node scripts/download-basics-images.js"
   },
   "dependencies": {
     "next": "^15.1.0",

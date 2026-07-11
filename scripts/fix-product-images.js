@@ -21,7 +21,7 @@ const IMAGES = {
   e004: U("photo-1717586756136-d9a3eeb1fa6f"), // Dupatta stole
   w004: U("photo-1756483509254-3cc48a5a15b2"), // Anarkali kurta set
 
-  // Under ₹100 basics — run npm run generate-basics-images for m006,w006,k003,s004,w007,m007
+  // Under ₹100 basics — run npm run download-basics-images
 };
 
 const CATEGORY_IMAGES = {
