@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Category } from "@/lib/types";
+import { assetUrl } from "@/lib/format";
 
 export function CategoryGrid({ categories }: { categories: Category[] }) {
   const featured = categories.filter((c) => c.featured);
@@ -16,7 +17,7 @@ export function CategoryGrid({ categories }: { categories: Category[] }) {
             className="group relative aspect-[3/4] overflow-hidden rounded-[var(--border-radius)]"
           >
             <Image
-              src={cat.image}
+              src={assetUrl(cat.image)}
               alt={cat.name}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"

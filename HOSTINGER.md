@@ -103,7 +103,42 @@ Open http://localhost:3000 — all images should be real fashion photos.
 
 ## Still seeing old images?
 
-1. **Hard refresh** live site: Ctrl+Shift+R
-2. **Clear Hostinger CDN/cache** in hPanel
-3. Confirm deploy log shows commit `5cab4bb` or newer (local images fix)
-4. Check you are NOT deploying from `C:\jijajiWebsite` old copy — use GitHub repo only
+Clearing cache alone is **not enough** — Hostinger must serve the **new image files** from the latest deploy.
+
+### Step 1 — Check if new images are on the server
+Open this URL in your browser (replace with your domain):
+
+```
+https://yourdomain.com/images/products/e003.jpg
+```
+
+- **Correct:** A woman in a **lehenga choli** (wedding outfit)
+- **Wrong:** Woman's hair from behind, t-shirt, or backpack → old files still on server
+
+### Step 2 — Full redeploy (not just cache clear)
+
+**Node.js Web App:**
+1. Hostinger → Node.js Web App → **Redeploy**
+2. Confirm build log shows commit `9ccc511` or newer
+3. `SITE=treviqo` must be set
+
+**Static upload (public_html):**
+```cmd
+cd C:\Repositiries\treviqo
+git pull
+npm install
+npm run build:hostinger
+```
+1. Delete **all** old files in `public_html` (especially `public_html/images/`)
+2. Upload **everything inside** the `out` folder
+3. Confirm `public_html/images/products/e003.jpg` exists
+
+### Step 3 — Browser
+- Hard refresh: **Ctrl+Shift+R**
+- Or open site in **Incognito** window
+
+### Step 4 — Verify commit
+Latest image fix: commit **`9ccc511`** (ethnic wear + under-100 unique photos).  
+Cache-busting: commit after that adds `?v=2` to image URLs so CDN fetches fresh files.
+
+Do **not** deploy from `C:\jijajiWebsite` — use GitHub repo only.

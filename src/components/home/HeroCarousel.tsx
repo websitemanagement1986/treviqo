@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import type { HeroSlide } from "@/lib/types";
+import { assetUrl } from "@/lib/format";
 import { IconChevronLeft, IconChevronRight } from "@/components/icons";
 
 export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
@@ -17,7 +18,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   return (
     <section className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] overflow-hidden bg-gray-900">
       <Image
-        src={slide.image}
+        src={assetUrl(slide.image)}
         alt={slide.title}
         fill
         className="object-cover opacity-70"

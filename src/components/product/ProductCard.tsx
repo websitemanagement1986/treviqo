@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/lib/types";
-import { formatCurrency, getDiscountPercent } from "@/lib/format";
+import { assetUrl, formatCurrency, getDiscountPercent } from "@/lib/format";
 import { StarRating } from "@/components/product/StarRating";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -12,7 +12,7 @@ export function ProductCard({ product }: { product: Product }) {
     <Link href={`/product/${product.slug}`} className="group block">
       <div className="relative aspect-[3/4] overflow-hidden bg-[var(--color-surface)] mb-2">
         <Image
-          src={product.images[0]}
+          src={assetUrl(product.images[0])}
           alt={product.name}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-300"

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CartItem } from "@/lib/types";
 import { useCart } from "@/context/CartContext";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, assetUrl } from "@/lib/format";
 import { IconMinus, IconPlus, IconX } from "@/components/icons";
 
 export function CartLineItem({ item }: { item: CartItem }) {
@@ -13,7 +13,7 @@ export function CartLineItem({ item }: { item: CartItem }) {
   return (
     <div className="flex gap-4 py-4 border-b border-gray-200">
       <Link href={`/product/${item.slug}`} className="relative w-24 h-32 flex-shrink-0 rounded overflow-hidden bg-[var(--color-surface)]">
-        <Image src={item.image} alt={item.name} fill className="object-cover" sizes="96px" />
+        <Image src={assetUrl(item.image)} alt={item.name} fill className="object-cover" sizes="96px" />
       </Link>
       <div className="flex-1 min-w-0">
         <div className="flex justify-between gap-2">

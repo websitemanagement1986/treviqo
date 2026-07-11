@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { Product } from "@/lib/types";
 import { useCart } from "@/context/CartContext";
-import { formatCurrency, getDiscountPercent, getEffectivePrice } from "@/lib/format";
+import { formatCurrency, getDiscountPercent, getEffectivePrice, assetUrl } from "@/lib/format";
 import { StarRating } from "@/components/product/StarRating";
 import { IconMinus, IconPlus } from "@/components/icons";
 
@@ -22,7 +22,7 @@ export function AddToCartSection({ product }: { product: Product }) {
       productId: product.id,
       slug: product.slug,
       name: product.name,
-      image: product.images[0],
+      image: assetUrl(product.images[0]),
       price,
       size: selectedSize,
       color: selectedColor,
