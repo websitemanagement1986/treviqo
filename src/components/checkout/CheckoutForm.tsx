@@ -8,9 +8,12 @@ import { generateOrderNumber } from "@/lib/format";
 import type { CheckoutFormData } from "@/lib/types";
 import { CartSummary } from "@/components/cart/CartSummary";
 
+type PaymentMethod = "cod" | "gateway";
+
 export function CheckoutForm() {
   const router = useRouter();
   const { items, clearCart } = useCart();
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
   const [form, setForm] = useState<CheckoutFormData>({
     email: "",
     firstName: "",
@@ -34,7 +37,16 @@ export function CheckoutForm() {
     const orderData = {
       orderNumber,
       items: [...items],
-      form: { ...form, cardNumber: "****", cardCvc: "***" },
+      paymentMethod: "cod" as const,
+      form: {
+        email: form.email,
+        firstName: form.firstName,
+        lastName: form.lastName,
+        address: form.address,
+        city: form.city,
+        state: form.state,
+        zip: form.zip,
+      },
       date: new Date().toISOString(),
     };
     sessionStorage.setItem("lastOrder", JSON.stringify(orderData));
@@ -54,7 +66,6 @@ export function CheckoutForm() {
   return (
     <form onSubmit={handleSubmit} className="grid lg:grid-cols-3 gap-8">
       <div className="lg:col-span-2 space-y-8">
-        {/* Contact */}
         <section>
           <h2 className="text-lg font-bold mb-4">Contact Information</h2>
           <input
@@ -67,7 +78,6 @@ export function CheckoutForm() {
           />
         </section>
 
-        {/* Shipping */}
         <section>
           <h2 className="text-lg font-bold mb-4">Shipping Address</h2>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -113,7 +123,7 @@ export function CheckoutForm() {
             />
             <input
               type="text"
-              placeholder="ZIP code"
+              placeholder="PIN code"
               value={form.zip}
               onChange={(e) => update("zip", e.target.value)}
               className="input-field"
@@ -122,44 +132,70 @@ export function CheckoutForm() {
           </div>
         </section>
 
-        {/* Payment - mock */}
         <section>
-          <h2 className="text-lg font-bold mb-4">Payment</h2>
-          <p className="text-xs text-[var(--color-text-muted)] mb-4">
-            This is a demo checkout. No real payment will be processed.
-          </p>
-          <div className="space-y-4">
-            <input
-              type="text"
-              placeholder="Card number"
-              value={form.cardNumber}
-              onChange={(e) => update("cardNumber", e.target.value)}
-              className="input-field"
-              required
-            />
-            <div className="grid grid-cols-2 gap-4">
+          <h2 className="text-lg font-bold mb-4">Payment Method</h2>
+          <div className="space-y-3">
+            <label
+              className={`flex items-start gap-3 p-4 border-2 rounded-[var(--border-radius)] cursor-pointer transition-colors ${
+                paymentMethod === "cod"
+                  ? "border-[var(--color-primary)] bg-[var(--color-surface)]"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
+            >
               <input
-                type="text"
-                placeholder="MM/YY"
-                value={form.cardExpiry}
-                onChange={(e) => update("cardExpiry", e.target.value)}
-                className="input-field"
-                required
+                type="radio"
+                name="paymentMethod"
+                value="cod"
+                checked={paymentMethod === "cod"}
+                onChange={() => setPaymentMethod("cod")}
+                className="mt-1 accent-[var(--color-primary)]"
               />
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-[var(--color-accent)]">Cash on Delivery (COD)</span>
+                  <span className="text-[10px] font-bold uppercase bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                    Available
+                  </span>
+                </div>
+                <p className="text-sm text-[var(--color-text-muted)] mt-1">
+                  Pay with cash when your order is delivered to your doorstep.
+                </p>
+              </div>
+            </label>
+
+            <label
+              className="flex items-start gap-3 p-4 border-2 border-gray-200 rounded-[var(--border-radius)] opacity-60 cursor-not-allowed bg-gray-50"
+            >
               <input
-                type="text"
-                placeholder="CVC"
-                value={form.cardCvc}
-                onChange={(e) => update("cardCvc", e.target.value)}
-                className="input-field"
-                required
+                type="radio"
+                name="paymentMethod"
+                value="gateway"
+                disabled
+                className="mt-1"
               />
-            </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-semibold text-[var(--color-accent)]">Payment Gateway</span>
+                  <span className="text-[10px] font-bold uppercase bg-[var(--color-primary)] text-white px-2 py-0.5 rounded">
+                    Coming Soon
+                  </span>
+                </div>
+                <p className="text-sm text-[var(--color-text-muted)] mt-1">
+                  Pay online via UPI, credit/debit card, or net banking. Available shortly.
+                </p>
+              </div>
+            </label>
           </div>
         </section>
 
+        {paymentMethod === "cod" && (
+          <div className="bg-green-50 border border-green-200 rounded-[var(--border-radius)] p-4 text-sm text-green-800">
+            You have selected <strong>Cash on Delivery</strong>. Please keep the exact amount ready at the time of delivery.
+          </div>
+        )}
+
         <button type="submit" className="btn-primary w-full py-3 text-base">
-          Place Order
+          Place Order (COD)
         </button>
       </div>
 
