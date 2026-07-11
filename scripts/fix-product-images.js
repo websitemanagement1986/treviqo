@@ -21,11 +21,7 @@ const IMAGES = {
   e004: U("photo-1717586756136-d9a3eeb1fa6f"), // Dupatta stole
   w004: U("photo-1756483509254-3cc48a5a15b2"), // Anarkali kurta set
 
-  // Under ₹100 basics — unique images, no reuse of t-shirts/sweatshirts
-  m006: U("photo-1586350977771-b3b0abd50c82"), // Men's ankle socks
-  w006:
-    "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=800&q=80&auto=format&fit=crop&hue=180",
-  // k003, s004, w007, m007: run scripts/generate-basics-images.ps1 (stock photos mismatch)
+  // Under ₹100 basics — run npm run generate-basics-images for m006,w006,k003,s004,w007,m007
 };
 
 const CATEGORY_IMAGES = {
