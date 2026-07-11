@@ -7,7 +7,7 @@
         { "label": "T-Shirts", "href": "/category/men" },
         { "label": "Shirts", "href": "/category/men" },
         { "label": "Jeans", "href": "/category/men" },
-        { "label": "Trousers", "href": "/category/men" },
+        { "label": "Socks & Innerwear", "href": "/category/men" },
         { "label": "Jackets", "href": "/category/men" },
         { "label": "Sneakers", "href": "/category/men" }
       ]
@@ -19,8 +19,7 @@
         { "label": "Dresses", "href": "/category/women" },
         { "label": "Tops", "href": "/category/women" },
         { "label": "Kurtas", "href": "/category/women" },
-        { "label": "Jeans", "href": "/category/women" },
-        { "label": "Heels", "href": "/category/women" },
+        { "label": "Socks & Accessories", "href": "/category/women" },
         { "label": "Handbags", "href": "/category/women" }
       ]
     },
@@ -30,7 +29,7 @@
       "children": [
         { "label": "Boys Clothing", "href": "/category/kids" },
         { "label": "Girls Clothing", "href": "/category/kids" },
-        { "label": "Footwear", "href": "/category/kids" }
+        { "label": "Socks", "href": "/category/kids" }
       ]
     },
     {
@@ -63,26 +62,27 @@
         { "label": "Men", "href": "/category/men" },
         { "label": "Women", "href": "/category/women" },
         { "label": "Kids", "href": "/category/kids" },
-        { "label": "Ethnic Wear", "href": "/category/ethnic" }
+        { "label": "Ethnic Wear", "href": "/category/ethnic" },
+        { "label": "Sportswear", "href": "/category/sportswear" }
       ]
     },
     {
       "title": "Customer Policies",
       "links": [
-        { "label": "Contact Us", "href": "#" },
-        { "label": "FAQ", "href": "#" },
-        { "label": "T&C", "href": "#" },
-        { "label": "Track Orders", "href": "#" },
-        { "label": "Shipping", "href": "#" }
+        { "label": "Contact Us", "href": "/contact-us" },
+        { "label": "Terms & Conditions", "href": "/info/terms-and-conditions" },
+        { "label": "Privacy Policy", "href": "/info/privacy-policy" },
+        { "label": "Refund Policy", "href": "/info/refund-policy" },
+        { "label": "Cancellation Policy", "href": "/info/cancellation-policy" }
       ]
     },
     {
-      "title": "Experience Treviqo",
+      "title": "About Treviqo",
       "links": [
-        { "label": "Mobile App", "href": "#" },
-        { "label": "Gift Cards", "href": "#" },
-        { "label": "Careers", "href": "#" },
-        { "label": "Blog", "href": "#" }
+        { "label": "About Us", "href": "/info/about-us" },
+        { "label": "Contact Us", "href": "/contact-us" },
+        { "label": "Track Orders", "href": "/contact-us" },
+        { "label": "Sale", "href": "/category/sale" }
       ]
     }
   ]

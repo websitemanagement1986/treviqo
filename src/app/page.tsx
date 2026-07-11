@@ -15,6 +15,10 @@ export default function HomePage() {
       <BrandsRow brands={config.brands} />
       <CategoryGrid categories={config.categories} />
       <DealsRow products={dealProducts} title="Deals on Top Brands" />
+      <DealsRow
+        products={config.products.filter((p) => (p.salePrice ?? p.price) < 100).slice(0, 8)}
+        title="Under ₹100"
+      />
       {featuredProducts.length > 0 && (
         <DealsRow products={featuredProducts} title="Trending Now" />
       )}

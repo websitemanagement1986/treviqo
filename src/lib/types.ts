@@ -13,12 +13,15 @@ export interface ThemeConfig {
 
 export interface SiteInfo {
   name: string;
+  legalName: string;
   tagline: string;
   promoBar: string;
   freeShippingThreshold: number;
   contact: {
+    person: string;
     email: string;
     phone: string;
+    address: string;
   };
   social: {
     facebook?: string;
@@ -84,6 +87,11 @@ export interface HeroSlide {
   image: string;
 }
 
+export interface PageContent {
+  title: string;
+  sections: { heading?: string; body: string }[];
+}
+
 export interface SiteConfig {
   siteId: string;
   site: SiteInfo;
@@ -93,6 +101,7 @@ export interface SiteConfig {
   products: Product[];
   heroSlides: HeroSlide[];
   brands: Brand[];
+  pages: Record<string, PageContent>;
 }
 
 export interface CartItem {

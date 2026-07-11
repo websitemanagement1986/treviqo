@@ -1,11 +1,14 @@
 {
   "name": "Treviqo",
+  "legalName": "Treviqo Traders (OPC) Pvt Ltd",
   "tagline": "Fashion. Lifestyle. You.",
   "promoBar": "Free delivery on orders above ₹499 | New styles added daily",
   "freeShippingThreshold": 499,
   "contact": {
+    "person": "Neeraj Kumar",
     "email": "support@treviqo.com",
-    "phone": "1800-123-4567"
+    "phone": "+918796065003",
+    "address": "Unit no 527, P5/B Block, NPX Tower, Sec-153, Noida, Gautam Buddha Nagar, UP 201301"
   },
   "social": {
     "facebook": "https://facebook.com",

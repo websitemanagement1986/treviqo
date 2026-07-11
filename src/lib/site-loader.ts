@@ -30,6 +30,7 @@ export function getSiteConfig(siteId?: string): SiteConfig {
     products: read("products.json"),
     heroSlides: read("hero.json"),
     brands: read("brands.json"),
+    pages: read("pages.json"),
   };
 }
 

@@ -198,5 +198,75 @@
     "rating": 4.4, "reviewCount": 1432, "featured": true, "deal": true,
     "shipping": "Free delivery on orders above ₹499.", "returns": "7 days easy return & exchange.",
     "createdAt": "2026-06-09"
+  },
+  {
+    "id": "m006", "slug": "mens-ankle-socks-3pack", "name": "Cotton Ankle Socks - Pack of 3", "brand": "Treviqo Basics",
+    "description": "Soft cotton ankle socks in assorted colours. Pack of 3 — perfect everyday essential.",
+    "price": 149, "salePrice": 79, "category": "men",
+    "images": ["https://picsum.photos/seed/mens-socks/800/1000"],
+    "colors": ["Black", "White", "Grey"], "sizes": ["Free Size"],
+    "rating": 4.2, "reviewCount": 3421, "featured": true, "deal": true,
+    "shipping": "Free delivery on orders above ₹499.", "returns": "7 days easy return & exchange.",
+    "createdAt": "2026-07-01"
+  },
+  {
+    "id": "m007", "slug": "mens-handkerchief-3pack", "name": "Cotton Handkerchief Pack of 3", "brand": "Treviqo Basics",
+    "description": "Pure cotton handkerchiefs, soft and absorbent. Set of 3 in classic white.",
+    "price": 129, "salePrice": 89, "category": "men",
+    "images": ["https://picsum.photos/seed/handkerchief/800/1000"],
+    "colors": ["White"], "sizes": ["Free Size"],
+    "rating": 4.0, "reviewCount": 876, "deal": true,
+    "shipping": "Free delivery on orders above ₹499.", "returns": "7 days easy return & exchange.",
+    "createdAt": "2026-07-02"
+  },
+  {
+    "id": "w006", "slug": "womens-ankle-socks-2pack", "name": "Women Ankle Socks - Pack of 2", "brand": "Treviqo Basics",
+    "description": "Comfortable ankle-length socks for women. Soft cotton blend, pack of 2.",
+    "price": 99, "salePrice": 69, "category": "women",
+    "images": ["https://picsum.photos/seed/womens-socks/800/1000"],
+    "colors": ["Pink", "Black", "Nude"], "sizes": ["Free Size"],
+    "rating": 4.3, "reviewCount": 2103, "featured": true, "deal": true,
+    "shipping": "Free delivery on orders above ₹499.", "returns": "7 days easy return & exchange.",
+    "createdAt": "2026-07-01"
+  },
+  {
+    "id": "w007", "slug": "hair-scrunchie-set", "name": "Hair Scrunchie Set of 5", "brand": "Treviqo Basics",
+    "description": "Soft satin scrunchies in assorted colours. Gentle on hair, set of 5.",
+    "price": 79, "salePrice": 49, "category": "women",
+    "images": ["https://picsum.photos/seed/scrunchies/800/1000"],
+    "colors": ["Assorted"], "sizes": ["Free Size"],
+    "rating": 4.5, "reviewCount": 1543, "deal": true,
+    "shipping": "Free delivery on orders above ₹499.", "returns": "7 days easy return & exchange.",
+    "createdAt": "2026-07-03"
+  },
+  {
+    "id": "k003", "slug": "kids-cotton-socks-3pack", "name": "Kids Cotton Socks - Pack of 3", "brand": "Treviqo Basics",
+    "description": "Colourful cotton socks for kids. Soft, breathable and durable. Pack of 3.",
+    "price": 119, "salePrice": 59, "category": "kids",
+    "images": ["https://picsum.photos/seed/kids-socks/800/1000"],
+    "colors": ["Assorted"], "sizes": ["2-4Y", "5-7Y", "8-10Y"],
+    "rating": 4.4, "reviewCount": 987, "featured": true, "deal": true,
+    "shipping": "Free delivery on orders above ₹499.", "returns": "7 days easy return & exchange.",
+    "createdAt": "2026-07-02"
+  },
+  {
+    "id": "s004", "slug": "sports-wristbands", "name": "Sports Wrist Sweatbands Pair", "brand": "Treviqo Basics",
+    "description": "Absorbent terry cloth wristbands for gym and sports. One pair.",
+    "price": 149, "salePrice": 99, "category": "sportswear",
+    "images": ["https://picsum.photos/seed/wristbands/800/1000"],
+    "colors": ["White", "Black", "Navy"], "sizes": ["Free Size"],
+    "rating": 4.1, "reviewCount": 432, "deal": true,
+    "shipping": "Free delivery on orders above ₹499.", "returns": "7 days easy return & exchange.",
+    "createdAt": "2026-07-04"
+  },
+  {
+    "id": "e004", "slug": "dupatta-stole", "name": "Lightweight Cotton Dupatta Stole", "brand": "Treviqo Basics",
+    "description": "Simple cotton dupatta stole to pair with kurtas and ethnic wear. Lightweight and breathable.",
+    "price": 199, "salePrice": 99, "category": "ethnic",
+    "images": ["https://picsum.photos/seed/dupatta/800/1000"],
+    "colors": ["White", "Pink", "Yellow", "Green"], "sizes": ["Free Size"],
+    "rating": 4.3, "reviewCount": 654, "deal": true,
+    "shipping": "Free delivery on orders above ₹499.", "returns": "7 days easy return & exchange.",
+    "createdAt": "2026-07-05"
   }
 ]
