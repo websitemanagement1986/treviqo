@@ -3,42 +3,42 @@
     "slug": "men",
     "name": "Men",
     "description": "Trending shirts, jeans, jackets and footwear for men.",
-    "image": "https://picsum.photos/seed/treviqo-men/600/800",
+    "image": "https://images.unsplash.com/photo-1617137968427-85924c800a4a?w=600&h=800&fit=crop&q=80",
     "featured": true
   },
   {
     "slug": "women",
     "name": "Women",
     "description": "Dresses, tops, ethnic wear and accessories for every occasion.",
-    "image": "https://picsum.photos/seed/treviqo-women/600/800",
+    "image": "https://images.unsplash.com/photo-1483985988355-763728e3685b?w=600&h=800&fit=crop&q=80",
     "featured": true
   },
   {
     "slug": "kids",
     "name": "Kids",
     "description": "Comfortable and stylish clothing for boys and girls.",
-    "image": "https://picsum.photos/seed/treviqo-kids/600/800",
+    "image": "https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&h=800&fit=crop&q=80",
     "featured": true
   },
   {
     "slug": "ethnic",
     "name": "Ethnic Wear",
     "description": "Kurtas, sarees, lehengas and festive collections.",
-    "image": "https://picsum.photos/seed/treviqo-ethnic/600/800",
+    "image": "https://images.unsplash.com/photo-1610030469668-9cffeed43454?w=600&h=800&fit=crop&q=80",
     "featured": true
   },
   {
     "slug": "sportswear",
     "name": "Sportswear",
     "description": "Activewear and sports shoes for your fitness goals.",
-    "image": "https://picsum.photos/seed/treviqo-sport/600/800",
+    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&h=800&fit=crop&q=80",
     "featured": true
   },
   {
     "slug": "sale",
     "name": "Sale",
     "description": "Best deals on top brands. Limited period offers.",
-    "image": "https://picsum.photos/seed/treviqo-sale/600/800",
+    "image": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=800&fit=crop&q=80",
     "featured": false
   }
 ]
