@@ -2,8 +2,9 @@
   "name": "Treviqo",
   "legalName": "Treviqo Traders (OPC) Pvt Ltd",
   "tagline": "Fashion. Lifestyle. You.",
-  "promoBar": "Free delivery on orders above ₹499 | New styles added daily",
-  "freeShippingThreshold": 499,
+  "promoBar": "Free delivery on orders above ₹500 | New styles added daily",
+  "freeShippingThreshold": 500,
+  "deliveryCharge": 50,
   "contact": {
     "person": "Neeraj Kumar",
     "email": "support@treviqo.co.in",

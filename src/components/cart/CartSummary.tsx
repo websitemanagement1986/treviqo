@@ -8,7 +8,7 @@ import { formatCurrency } from "@/lib/format";
 export function CartSummary({ showCheckout = true }: { showCheckout?: boolean }) {
   const { site } = useSite();
   const { subtotal, itemCount } = useCart();
-  const shipping = subtotal >= site.freeShippingThreshold ? 0 : 9.99;
+  const shipping = subtotal >= site.freeShippingThreshold ? 0 : (site.deliveryCharge ?? 50);
   const total = subtotal + shipping;
 
   return (

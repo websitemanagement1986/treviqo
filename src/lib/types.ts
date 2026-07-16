@@ -17,6 +17,7 @@ export interface SiteInfo {
   tagline: string;
   promoBar: string;
   freeShippingThreshold: number;
+  deliveryCharge: number;
   contact: {
     person: string;
     email: string;

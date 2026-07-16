@@ -72,7 +72,8 @@
         { "label": "Contact Us", "href": "/contact-us" },
         { "label": "Terms & Conditions", "href": "/info/terms-and-conditions" },
         { "label": "Privacy Policy", "href": "/info/privacy-policy" },
-        { "label": "Refund Policy", "href": "/info/refund-policy" },
+        { "label": "Shipping Policy", "href": "/info/shipping-policy" },
+        { "label": "Return & Refund Policy", "href": "/info/refund-policy" },
         { "label": "Cancellation Policy", "href": "/info/cancellation-policy" }
       ]
     },

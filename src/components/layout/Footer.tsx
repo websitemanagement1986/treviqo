@@ -83,7 +83,8 @@ export function Footer() {
           <div className="flex flex-wrap gap-4 justify-center">
             <Link href="/info/terms-and-conditions" className="hover:text-white">Terms</Link>
             <Link href="/info/privacy-policy" className="hover:text-white">Privacy</Link>
-            <Link href="/info/refund-policy" className="hover:text-white">Refunds</Link>
+            <Link href="/info/shipping-policy" className="hover:text-white">Shipping</Link>
+            <Link href="/info/refund-policy" className="hover:text-white">Returns</Link>
             <Link href="/info/cancellation-policy" className="hover:text-white">Cancellation</Link>
             {site.social.instagram && (
               <a href={site.social.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-white">Instagram</a>

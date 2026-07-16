@@ -40,22 +40,26 @@
       },
       {
         "heading": "4. Shipping & Delivery",
-        "body": "We deliver across India. Delivery timelines vary by location and are estimates only. Free delivery is available on orders above ₹499. Risk of loss passes to you upon delivery to the carrier."
+        "body": "We deliver across India. Free shipping applies on orders of ₹500 and above; a standard ₹50 delivery charge applies to orders below ₹500. Delivery timelines vary by location and are estimates only. See our Shipping Policy for full details."
       },
       {
-        "heading": "5. Intellectual Property",
+        "heading": "5. Returns & Refunds",
+        "body": "Returns and refunds may be initiated within 15 days from the date of purchase, subject to eligibility. See our Return and Refund Policy for full details."
+      },
+      {
+        "heading": "6. Intellectual Property",
         "body": "All content on this website — including logos, text, images, and design — is the property of Treviqo Traders (OPC) Pvt Ltd and may not be reproduced without written permission."
       },
       {
-        "heading": "6. Limitation of Liability",
+        "heading": "7. Limitation of Liability",
         "body": "Treviqo Traders (OPC) Pvt Ltd shall not be liable for any indirect, incidental, or consequential damages arising from use of the website or products purchased through it."
       },
       {
-        "heading": "7. Governing Law",
+        "heading": "8. Governing Law",
         "body": "These terms are governed by the laws of India. Any disputes shall be subject to the exclusive jurisdiction of courts in Gautam Buddha Nagar, Uttar Pradesh."
       },
       {
-        "heading": "8. Contact",
+        "heading": "9. Contact",
         "body": "For questions regarding these terms, contact Neeraj Kumar at +91 8796065003 or support@treviqo.co.in. Registered office: Unit no 527, P5/B Block, NPX Tower, Sec-153, Noida, Gautam Buddha Nagar, UP 201301."
       }
     ]
@@ -96,35 +100,75 @@
       }
     ]
   },
-  "refund-policy": {
-    "title": "Refund Policy",
+  "shipping-policy": {
+    "title": "Shipping Policy",
     "sections": [
       {
-        "body": "At Treviqo, customer satisfaction is our priority. If you are not happy with your purchase, we offer a straightforward refund process as outlined below."
+        "body": "This Shipping Policy explains how Treviqo (operated by Treviqo Traders (OPC) Pvt Ltd) delivers orders placed on our website across India."
       },
       {
-        "heading": "Eligibility for Refund",
-        "body": "Refunds are available for products returned within 7 days of delivery, provided the item is unused, unwashed, and in its original packaging with all tags attached. Innerwear, socks (opened packs), and customized items are non-refundable unless defective."
+        "heading": "1. Delivery Coverage",
+        "body": "We ship to serviceable pin codes throughout India. Enter your pincode at checkout to confirm whether delivery is available in your area."
       },
       {
-        "heading": "Defective or Wrong Items",
-        "body": "If you receive a defective, damaged, or incorrect product, contact us within 48 hours of delivery with photos. We will arrange a free pickup and issue a full refund or replacement at your choice."
+        "heading": "2. Shipping Charges",
+        "body": "Free shipping on all orders of ₹500 and above. A standard delivery charge of ₹50 applies to orders below ₹500. Shipping charges are calculated automatically at checkout based on your cart value."
       },
       {
-        "heading": "Refund Process",
-        "body": "Once we receive and inspect the returned item, refunds are processed within 5–7 business days to the original payment method. Bank processing times may add 3–5 additional business days."
+        "heading": "3. Order Processing & Delivery Time",
+        "body": "Orders are typically processed within 1–2 business days after confirmation. Estimated delivery time is 3–7 business days depending on your location and product availability. Delivery timelines may be longer during festivals, peak seasons or adverse weather. You will receive order confirmation and updates by email and/or SMS."
       },
       {
-        "heading": "Partial Refunds",
-        "body": "Partial refunds may be issued for items not in their original condition, missing tags, or showing signs of use."
+        "heading": "4. Delivery Attempts",
+        "body": "Our delivery partner will attempt delivery at the address provided during checkout. Please ensure your mobile number and address are correct. If you are unavailable, a second delivery attempt may be made. Repeated failed deliveries may result in order cancellation as per our Cancellation Policy."
       },
       {
-        "heading": "How to Initiate a Refund",
-        "body": "Email support@treviqo.co.in or call +91 8796065003 with your order number and reason for return. Our team will guide you through the return process."
+        "heading": "5. Cash on Delivery (COD)",
+        "body": "COD is available on eligible orders. The total payable amount (including shipping, if applicable) must be paid in cash at the time of delivery."
       },
       {
-        "heading": "Contact",
-        "body": "Neeraj Kumar, Treviqo Traders (OPC) Pvt Ltd, Unit no 527, P5/B Block, NPX Tower, Sec-153, Noida, Gautam Buddha Nagar, UP 201301."
+        "heading": "6. Undeliverable Orders",
+        "body": "Orders may be held or cancelled if the address is incomplete, incorrect, or outside our service area. For prepaid orders, a refund will be initiated after verification."
+      },
+      {
+        "heading": "7. Contact",
+        "body": "For shipping queries, contact Neeraj Kumar at +91 8796065003 or support@treviqo.co.in with your order ID. Treviqo Traders (OPC) Pvt Ltd, Unit no 527, P5/B Block, NPX Tower, Sec-153, Noida, Gautam Buddha Nagar, UP 201301."
+      }
+    ]
+  },
+  "refund-policy": {
+    "title": "Return and Refund Policy",
+    "sections": [
+      {
+        "body": "At Treviqo, we want you to shop with confidence. This Return and Refund Policy explains when and how you can return items or request a refund for orders placed on our website."
+      },
+      {
+        "heading": "1. Return & Refund Window",
+        "body": "You may initiate a return or refund request within 15 days from the date of purchase (order confirmation date), provided the item meets the eligibility criteria below."
+      },
+      {
+        "heading": "2. Eligible Returns & Refunds",
+        "body": "Returns and refunds are available for: wrong item delivered; damaged or defective items; missing items from your order; items returned unused, unwashed and in original packaging with all tags attached; and online payment charged but order not confirmed or not fulfilled."
+      },
+      {
+        "heading": "3. How to Request a Return or Refund",
+        "body": "Contact us with your order ID, item name and reason for return/refund. Share clear photos if the item is damaged or incorrect. Our support team will review your request and confirm eligibility within 1–2 business days. Approved returns may be picked up by our delivery partner or you may be asked to ship the item back. Email support@treviqo.co.in or call +91 8796065003."
+      },
+      {
+        "heading": "4. Refund Processing",
+        "body": "Online payments: refunds are credited to the original payment method within 5–7 business days after we receive and inspect the returned item. COD orders: refunds are issued via bank transfer or store credit after verification. Delivery fees are non-refundable unless the return is due to our error. Where possible, we may offer a free replacement instead of a refund."
+      },
+      {
+        "heading": "5. Non-Returnable & Non-Refundable Items",
+        "body": "Innerwear and socks (opened packs), customized items, items returned without tags or original packaging, products showing signs of use, and requests raised after the 15-day return window are not eligible for return or refund unless defective."
+      },
+      {
+        "heading": "6. Cancellations",
+        "body": "Orders cancelled before dispatch are eligible for a full refund. See our Cancellation Policy for details."
+      },
+      {
+        "heading": "7. Contact",
+        "body": "Neeraj Kumar, Treviqo Traders (OPC) Pvt Ltd, Unit no 527, P5/B Block, NPX Tower, Sec-153, Noida, Gautam Buddha Nagar, UP 201301. Phone: +91 8796065003 | Email: support@treviqo.co.in"
       }
     ]
   },
@@ -140,7 +184,7 @@
       },
       {
         "heading": "After Dispatch",
-        "body": "Once an order has been shipped, cancellation is not possible. You may refuse delivery or initiate a return under our Refund Policy after receiving the product."
+        "body": "Once an order has been shipped, cancellation is not possible. You may refuse delivery or initiate a return under our Return and Refund Policy after receiving the product."
       },
       {
         "heading": "Cancellation by Treviqo",
