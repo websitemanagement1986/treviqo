@@ -9,6 +9,7 @@ import type { CartItem } from "@/lib/types";
 
 interface OrderData {
   orderNumber: string;
+  transactionId?: string;
   items: CartItem[];
   paymentMethod?: "cod" | "gateway";
   form: {
@@ -58,7 +59,11 @@ export default function OrderConfirmationClient() {
       <p className="text-[var(--color-text-muted)] mb-2">
         Confirmation sent to {order.form.email}
       </p>
-      <p className="font-semibold mb-8">Order #{order.orderNumber}</p>
+      <p className="font-semibold mb-2">Order #{order.orderNumber}</p>
+      {order.transactionId && (
+        <p className="text-sm text-[var(--color-text-muted)] mb-8">Transaction ID: {order.transactionId}</p>
+      )}
+      {!order.transactionId && <div className="mb-8" />}
 
       <div className="bg-[var(--color-surface)] rounded-[var(--border-radius)] p-6 text-left mb-8">
         <h2 className="font-bold mb-4">Order Summary</h2>
@@ -80,7 +85,7 @@ export default function OrderConfirmationClient() {
           <span className="font-semibold">
             {order.paymentMethod === "cod" || !order.paymentMethod
               ? "Cash on Delivery (COD)"
-              : "Payment Gateway"}
+              : "Paid Online (Razorpay)"}
           </span>
         </div>
       </div>

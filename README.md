@@ -6,7 +6,7 @@ A **Myntra-inspired** fashion e-commerce website for garments and apparel. Built
 
 - Fashion-focused storefront (Men, Women, Kids, Ethnic, Sportswear)
 - Myntra-style pink theme with brand-first product cards
-- Product search, filters, cart, and mock checkout
+- Product search, filters, cart, and checkout (COD + Razorpay)
 - INR pricing, top brands section, deals carousel
 - JSON-driven config — easy to customize products and branding
 
@@ -37,10 +37,32 @@ Edit files in `sites/treviqo/`:
 
 ## Deploy
 
+Use **server mode** (`next start`) on Hostinger so payment API routes work:
+
 ```bash
 npm run build
 npm start
 ```
+
+Do **not** use `npm run build:hostinger` (static export) if you need Razorpay — API routes require a Node.js server.
+
+Set environment variables on Hostinger (see `.env.example`):
+
+| Variable | Purpose |
+|----------|---------|
+| `RAZORPAY_KEY_ID` | Razorpay live key |
+| `RAZORPAY_KEY_SECRET` | Razorpay live secret |
+| `RESEND_API_KEY` | Order confirmation emails (optional) |
+| `FROM_EMAIL` | Sender email (e.g. orders@treviqo.co.in) |
+| `ADMIN_EMAIL` | Admin order notifications |
+
+### Payment gateway authorization URLs
+
+| Field | URL |
+|-------|-----|
+| Website URL | `https://treviqo.co.in` |
+| Callback / verification URL | `https://treviqo.co.in/api/verify-payment` |
+| Success page | `https://treviqo.co.in/order-confirmation` |
 
 Or deploy to [Vercel](https://vercel.com) by connecting this repo.
 
