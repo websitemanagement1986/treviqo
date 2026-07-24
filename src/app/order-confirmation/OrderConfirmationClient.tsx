@@ -85,7 +85,7 @@ export default function OrderConfirmationClient() {
           <span className="font-semibold">
             {order.paymentMethod === "cod" || !order.paymentMethod
               ? "Cash on Delivery (COD)"
-              : "Paid Online (Razorpay)"}
+              : "Paid Online (PayMate)"}
           </span>
         </div>
       </div>

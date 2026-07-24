@@ -34,7 +34,28 @@ Add in Hostinger → Environment Variables:
 
 ```
 SITE=treviqo
+SITE_URL=https://treviqo.co.in
+PAYMATE_MERCHANT_ID=5F59A14F-A8AE-4FB4-81BC-7EEA859B2B6C
+PAYMATE_TERMINAL_ID=14926628-5AF7-480B-A027-2F676A467099
+PAYMATE_BUSINESS_XPRESS_ID=YJFW000003
+PAYMATE_IV=54327CD65487ECAB
+PAYMATE_ENDPOINT=https://paymate.in/PaymatePartnerStack/api/v2/CollectPayments
+PAYMATE_COMPANY_NAME=Treviqo Traders (OPC) Pvt Ltd
+PAYMATE_REFERENCE_CODE=TREVIQO01
+PAYMATE_PUBLIC_CERT_PATH=certs/paymate-public.cer
+PAYMATE_PARTNER_PRIVATE_KEY_B64=<run node scripts/print-paymate-private-key-env.js locally>
+RESEND_API_KEY=<your Resend key>
+FROM_EMAIL=orders@treviqo.co.in
+ADMIN_EMAIL=support@treviqo.co.in
 ```
+
+**PayMate URLs to register:**
+- Callback: `https://treviqo.co.in/api/paymate/callback`
+- Return: `https://treviqo.co.in/paymate-return`
+
+**Debug endpoints (after deploy):**
+- `GET /api/paymate/debug-ip` — outbound IP for PayMate whitelist
+- `GET /api/paymate/debug` — full PayMate connectivity test with decrypted responses
 
 ### 4. Redeploy
 - Click **Redeploy** or **Clear cache & redeploy**

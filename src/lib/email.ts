@@ -20,6 +20,7 @@ interface OrderEmailPayload {
   deliveryCharge: number;
   total: number;
   paymentMethod: "cod" | "online";
+  paymentProvider?: "paymate" | "razorpay";
 }
 
 async function sendViaResend(to: string, subject: string, html: string) {
@@ -70,7 +71,11 @@ function buildOrderHtml(payload: OrderEmailPayload, isAdmin: boolean) {
     : `<tr><td colspan="2">Delivery</td><td style="text-align:right;">FREE</td></tr>`;
 
   const payLabel =
-    paymentMethod === "cod" ? "Cash on Delivery" : "Paid Online via Razorpay";
+    paymentMethod === "cod"
+      ? "Cash on Delivery"
+      : payload.paymentProvider === "paymate"
+        ? "Paid Online via PayMate"
+        : "Paid Online via Razorpay";
   const title = isAdmin ? `New Order — ${site.name}` : `Order Confirmation — ${site.name}`;
   const greeting = isAdmin
     ? `<p>A new order has been placed on ${site.name}.</p>`

@@ -4,42 +4,13 @@ import Link from "next/link";
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
-import { useSite } from "@/context/SiteContext";
 import { generateOrderNumber } from "@/lib/format";
 import type { CheckoutFormData } from "@/lib/types";
 import { CartSummary } from "@/components/cart/CartSummary";
 
 type PaymentMethod = "cod" | "gateway";
 
-interface RazorpayResponse {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-}
-
-interface RazorpayOptions {
-  key: string;
-  amount: number;
-  currency: string;
-  name: string;
-  description: string;
-  order_id: string;
-  prefill?: { name?: string; email?: string; contact?: string };
-  theme?: { color?: string };
-  handler: (response: RazorpayResponse) => void | Promise<void>;
-  modal?: { ondismiss?: () => void };
-}
-
-interface RazorpayInstance {
-  open: () => void;
-  on: (event: string, cb: () => void) => void;
-}
-
-declare global {
-  interface Window {
-    Razorpay?: new (options: RazorpayOptions) => RazorpayInstance;
-  }
-}
+const PENDING_KEY = "treviqo_paymate_pending";
 
 function validateForm(form: CheckoutFormData, hasItems: boolean): string[] {
   const errors: string[] = [];
@@ -59,7 +30,6 @@ function validateForm(form: CheckoutFormData, hasItems: boolean): string[] {
 
 export function CheckoutForm() {
   const router = useRouter();
-  const { site } = useSite();
   const { items, clearCart } = useCart();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
   const [errors, setErrors] = useState<string[]>([]);
@@ -132,64 +102,51 @@ export function CheckoutForm() {
     saveOrderAndRedirect(generateOrderNumber(), result.transaction_id, "cod");
   };
 
-  const initiateGatewayPayment = async () => {
+  const initiatePaymatePayment = async () => {
     const customer = buildCustomer();
     const cart = buildCartPayload();
-
-    const res = await fetch("/api/create-order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cart, customer }),
-    });
-    const result = await res.json();
-    if (!res.ok) throw new Error(result.error || "Failed to create payment order");
-
-    if (!window.Razorpay) {
-      throw new Error("Payment gateway failed to load. Please refresh and try again.");
-    }
-
     const orderNumber = generateOrderNumber();
 
-    await new Promise<void>((resolve, reject) => {
-      const options: RazorpayOptions = {
-        key: result.key_id,
-        amount: result.amount,
-        currency: result.currency,
-        name: site.name,
-        description: "Fashion Order",
-        order_id: result.order_id,
-        prefill: { name: customer.name, email: customer.email, contact: customer.phone },
-        theme: { color: "#FF3F6C" },
-        handler: async (response) => {
-          try {
-            const verifyRes = await fetch("/api/verify-payment", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ ...response, customer, cart }),
-            });
-            const verifyData = await verifyRes.json();
-            if (!verifyRes.ok) throw new Error(verifyData.error || "Payment verification failed");
-            saveOrderAndRedirect(orderNumber, verifyData.transaction_id, "gateway");
-            resolve();
-          } catch (err) {
-            reject(err);
-          }
-        },
-        modal: {
-          ondismiss: () => {
-            setSubmitting(false);
-            reject(new Error("Payment cancelled"));
-          },
-        },
-      };
-
-      const rzp = new window.Razorpay!(options);
-      rzp.on("payment.failed", () => {
-        setSubmitting(false);
-        reject(new Error("Payment failed. Please try again."));
-      });
-      rzp.open();
+    const res = await fetch("/api/paymate/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cart, customer, payment_method: "upi" }),
     });
+    const result = await res.json();
+    if (!res.ok) {
+      const detail =
+        result.details?.DetailedSummary?.[0]?.StatusMessage ||
+        result.details?.Description ||
+        result.error;
+      throw new Error(detail || "Failed to create payment order");
+    }
+
+    if (!result.payment_url) {
+      throw new Error("PayMate did not return a payment URL. Please try again or contact support.");
+    }
+
+    sessionStorage.setItem(
+      PENDING_KEY,
+      JSON.stringify({
+        orderId: result.order_id,
+        orderNumber,
+        amount: result.amount,
+        customer,
+        items: [...items],
+        paymentMethod: "upi",
+        form: {
+          email: form.email,
+          firstName: form.firstName,
+          lastName: form.lastName,
+          address: form.address,
+          city: form.city,
+          state: form.state,
+          zip: form.zip,
+        },
+      })
+    );
+
+    window.location.href = result.payment_url;
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -206,7 +163,7 @@ export function CheckoutForm() {
       if (paymentMethod === "cod") {
         await placeCodOrder();
       } else {
-        await initiateGatewayPayment();
+        await initiatePaymatePayment();
       }
     } catch (err) {
       setErrors([err instanceof Error ? err.message : "Checkout failed"]);
@@ -358,13 +315,13 @@ export function CheckoutForm() {
               />
               <div className="flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-semibold text-[var(--color-accent)]">Pay Online (Razorpay)</span>
+                  <span className="font-semibold text-[var(--color-accent)]">Pay Online (PayMate UPI)</span>
                   <span className="text-[10px] font-bold uppercase bg-[var(--color-primary)] text-white px-2 py-0.5 rounded">
-                    UPI · Cards · Net Banking
+                    UPI
                   </span>
                 </div>
                 <p className="text-sm text-[var(--color-text-muted)] mt-1">
-                  Secure online payment via Razorpay.
+                  Secure online payment via PayMate hosted checkout.
                 </p>
               </div>
             </label>
@@ -379,7 +336,7 @@ export function CheckoutForm() {
 
         {paymentMethod === "gateway" && (
           <div className="bg-pink-50 border border-pink-200 rounded-[var(--border-radius)] p-4 text-sm text-pink-900">
-            You will be redirected to Razorpay to complete payment securely.
+            You will be redirected to PayMate to complete UPI payment securely.
           </div>
         )}
 
