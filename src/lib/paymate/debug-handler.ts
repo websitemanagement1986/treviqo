@@ -194,7 +194,7 @@ function buildSamplePayload(orderId: string) {
         TransactionDetails: {
           OrderID: orderId,
           CompanyName: "Rahul",
-          ReferenceCode: "",
+          ReferenceCode: "TEST01",
           ContactXpressID: "",
           ReceipentMobileNo: "",
           RecipentEmailAddress: "",
