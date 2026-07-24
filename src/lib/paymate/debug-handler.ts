@@ -215,6 +215,7 @@ function buildSamplePayload(
     UDF1: [{ abc: "def" }],
     UDF2: [{ abc: "def" }, { abc: "def" }],
     UDF3: [],
+    Remarks: "Payments",
   };
   const paymentMethod: Record<string, string> = {
     PaymentMode: paymentMode,
