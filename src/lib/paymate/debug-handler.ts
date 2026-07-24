@@ -367,8 +367,13 @@ export async function runPaymateDebug(debugKey?: string | null) {
 
     const orderId = `DBG${Date.now()}`.slice(0, 20);
     const payload = buildSamplePayload(orderId);
+    const plainJsonString = JSON.stringify(payload);
     const encryptedBody = encryptRequest(payload, config.paymatePublicCert, config.iv);
     const jsonBody = JSON.stringify(encryptedBody);
+
+    report.plain_json_string = plainJsonString;
+    report.plain_json_length = plainJsonString.length;
+    report.has_extra_spaces = /  /.test(plainJsonString) || /\t/.test(plainJsonString);
 
     const baseHeaders = {
       "Content-Type": "application/json",
