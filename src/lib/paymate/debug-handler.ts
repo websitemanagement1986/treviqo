@@ -208,13 +208,13 @@ function buildSamplePayload(
   const deviceOS = options.DeviceOS || "ANDROID";
   const transactionDetails: Record<string, unknown> = {
     OrderID: orderId,
-    CompanyName: "Test Customer",
-    ReferenceCode: config.referenceCode,
+    CompanyName: "Rahul",
+    ReferenceCode: "",
     ContactXpressID: "",
-    ReceipentMobileNo: "9876543210",
-    RecipentEmailAddress: "debug@test.com",
-    UDF1: [{ test: "value1" }],
-    UDF2: [{ test: "value2" }],
+    ReceipentMobileNo: "",
+    RecipentEmailAddress: "",
+    UDF1: [{ abc: "def" }],
+    UDF2: [{ abc: "def" }, { abc: "def" }],
     UDF3: [],
     Remarks: "Payments",
   };
@@ -234,7 +234,7 @@ function buildSamplePayload(
       {
         TransactionDetails: transactionDetails,
         INVOICE: {
-          InvoiceNumber: orderId,
+          InvoiceNumber: "",
           InvoiceStartDate: "",
           InvoiceTerm: "",
           InvoiceAmount: "100",
