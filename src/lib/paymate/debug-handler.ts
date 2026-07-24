@@ -195,6 +195,8 @@ function buildSamplePayload(
     methodKey?: string;
     PaymentMode?: string;
     PaymentType?: string;
+    TargetApp?: string;
+    DeviceOS?: string;
     includeReturnUrl?: boolean;
   } = {}
 ) {
@@ -202,20 +204,30 @@ function buildSamplePayload(
   const paymateMethod = resolvePaymateMethod(methodKey);
   const paymentMode = options.PaymentMode || paymateMethod.PaymentMode;
   const paymentType = options.PaymentType || paymateMethod.PaymentType;
+  const targetApp = options.TargetApp || "GPAY";
+  const deviceOS = options.DeviceOS || "ANDROID";
   const transactionDetails: Record<string, unknown> = {
     OrderID: orderId,
-    CompanyName: config.companyName,
+    CompanyName: "Test Customer",
     ReferenceCode: config.referenceCode,
     ContactXpressID: "",
     ReceipentMobileNo: "9876543210",
-    RecipentEmailAddress: "debug@treviqo.co.in",
-    UDF1: [],
-    UDF2: [],
+    RecipentEmailAddress: "debug@test.com",
+    UDF1: [{ test: "value1" }],
+    UDF2: [{ test: "value2" }],
     UDF3: [],
-    Remarks: "PayMate connectivity test",
+    Remarks: "Payments",
   };
   if (options.includeReturnUrl !== false) {
     transactionDetails.ReturnURL = `${config.siteUrl}/paymate-return?orderId=${orderId}`;
+  }
+  const paymentMethod: Record<string, string> = {
+    PaymentMode: paymentMode,
+    PaymentType: paymentType,
+  };
+  if (paymentType === "Intent") {
+    paymentMethod.TargetApp = targetApp;
+    paymentMethod.DeviceOS = deviceOS;
   }
   return {
     CollectionDetails: [
@@ -225,14 +237,11 @@ function buildSamplePayload(
           InvoiceNumber: orderId,
           InvoiceStartDate: "",
           InvoiceTerm: "",
-          InvoiceAmount: "1",
+          InvoiceAmount: "100",
           GSTType: "",
           GST: "",
         },
-        PaymentMethod: {
-          PaymentMode: paymentMode,
-          PaymentType: paymentType,
-        },
+        PaymentMethod: paymentMethod,
         SplitMDR: {
           BuyerCharges: "0",
           SupplierCharges: "100",
@@ -478,11 +487,11 @@ export async function runPaymateDebug(debugKey?: string | null) {
     }
 
     const upiVariants = [
-      { id: "upi_vpa", hypothesis: "UPI + VPA", PaymentMode: "UPI", PaymentType: "VPA" },
-      { id: "upi_qrcode", hypothesis: "UPI + QRCode", PaymentMode: "UPI", PaymentType: "QRCode" },
-      { id: "upi_vpa_qrcode", hypothesis: "UPI + VPA/QRCode (doc table)", PaymentMode: "UPI", PaymentType: "VPA/QRCode" },
-      { id: "upi_intent", hypothesis: "UPI + Intent (mobile intent flow)", PaymentMode: "UPI", PaymentType: "Intent" },
-      { id: "upi_vpa_no_return", hypothesis: "UPI+VPA without ReturnURL", PaymentMode: "UPI", PaymentType: "VPA", includeReturnUrl: false },
+      { id: "upi_intent_gpay_android", hypothesis: "UPI Intent + GPAY + ANDROID", PaymentMode: "UPI", PaymentType: "Intent", TargetApp: "GPAY", DeviceOS: "ANDROID" },
+      { id: "upi_intent_gpay_ios", hypothesis: "UPI Intent + GPAY + IOS", PaymentMode: "UPI", PaymentType: "Intent", TargetApp: "GPAY", DeviceOS: "IOS" },
+      { id: "upi_intent_phonepe", hypothesis: "UPI Intent + PHONEPE + ANDROID", PaymentMode: "UPI", PaymentType: "Intent", TargetApp: "PHONEPE", DeviceOS: "ANDROID" },
+      { id: "upi_intent_paytm", hypothesis: "UPI Intent + PAYTM + ANDROID", PaymentMode: "UPI", PaymentType: "Intent", TargetApp: "PAYTM", DeviceOS: "ANDROID" },
+      { id: "upi_vpa_qrcode", hypothesis: "UPI + VPA/QRCode (hosted checkout)", PaymentMode: "UPI", PaymentType: "VPA/QRCode" },
     ];
     report.upi_payment_variations = [];
     for (const variant of upiVariants) {

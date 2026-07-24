@@ -30,20 +30,29 @@ export async function POST(req: NextRequest) {
     const orderId = buildOrderId();
     const returnUrl = `${config.siteUrl}/paymate-return?orderId=${encodeURIComponent(orderId)}`;
 
+    const paymentMethodObj: Record<string, string> = {
+      PaymentMode: paymateMethod.PaymentMode,
+      PaymentType: paymateMethod.PaymentType,
+    };
+    if (paymateMethod.PaymentType === "Intent") {
+      paymentMethodObj.TargetApp = "GPAY";
+      paymentMethodObj.DeviceOS = "ANDROID";
+    }
+
     const payload = {
       CollectionDetails: [
         {
           TransactionDetails: {
             OrderID: orderId,
-            CompanyName: config.companyName,
+            CompanyName: customer.name,
             ReferenceCode: config.referenceCode,
             ContactXpressID: "",
             ReceipentMobileNo: String(customer.phone).replace(/\D/g, "").slice(-10),
             RecipentEmailAddress: customer.email,
-            UDF1: [],
-            UDF2: [],
+            UDF1: [{ order: orderId }],
+            UDF2: [{ site: "treviqo" }],
             UDF3: [],
-            Remarks: "Treviqo fashion order",
+            Remarks: "Payments",
             ReturnURL: returnUrl,
           },
           INVOICE: {
@@ -54,10 +63,7 @@ export async function POST(req: NextRequest) {
             GSTType: "",
             GST: "",
           },
-          PaymentMethod: {
-            PaymentMode: paymateMethod.PaymentMode,
-            PaymentType: paymateMethod.PaymentType,
-          },
+          PaymentMethod: paymentMethodObj,
           SplitMDR: {
             BuyerCharges: "0",
             SupplierCharges: "100",

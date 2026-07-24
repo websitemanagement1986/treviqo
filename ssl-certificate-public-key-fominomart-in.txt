@@ -1,0 +1,54 @@
+SSL CERTIFICATE AND PUBLIC KEY DETAILS
+======================================
+
+Merchant / Website: fominomart.in
+Covered domains: fominomart.in, www.fominomart.in
+SSL Provider: Hostinger Lifetime SSL
+Certificate Issuer: Let's Encrypt (YE1)
+Certificate Subject: fominomart.in
+Valid From: 2026-07-09
+Valid Until: 2026-10-07
+Serial Number: 054D9BB25AB0EFA165AFEA9A53E581F297A8
+Fingerprint (SHA-256): A0:22:C3:58:24:B7:25:0E:15:BE:76:B8:F9:30:53:E7:34:AD:7D:2D:AE:7F:DE:29:4A:E9:38:9A:37:C4:FA:B4
+Signature Algorithm: ECDSA with SHA-384
+HTTPS Force Redirect: Enabled
+
+PUBLIC KEY (PEM FORMAT)
+-----------------------
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEkktFv5oe1c5NGJXRIXVoBIyatNJo
+dGpd8YiTZKN85K3OqnIsPTe0eCh4TlBqHfOB/PYksOq5Lecmh7Ja74ICPg==
+-----END PUBLIC KEY-----
+
+FULL CERTIFICATE (PEM FORMAT)
+-----------------------------
+-----BEGIN CERTIFICATE-----
+MIIDmzCCAyKgAwIBAgISBU2bslqw76Flr+qaU+WB8peoMAoGCCqGSM49BAMDMDMx
+CzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQwwCgYDVQQDEwNZ
+RTEwHhcNMjYwNzA5MTYyMTA0WhcNMjYxMDA3MTYyMTAzWjAYMRYwFAYDVQQDEw1m
+b21pbm9tYXJ0LmluMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEkktFv5oe1c5N
+GJXRIXVoBIyatNJodGpd8YiTZKN85K3OqnIsPTe0eCh4TlBqHfOB/PYksOq5Lecm
+h7Ja74ICPqOCAi8wggIrMA4GA1UdDwEB/wQEAwIHgDATBgNVHSUEDDAKBggrBgEF
+BQcDATAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQyGidH192c3rkuZnh6J5uRY356
+yzAfBgNVHSMEGDAWgBS7IMpHC/7X5Zz5jwkqo4w3RbG82DAzBggrBgEFBQcBAQQn
+MCUwIwYIKwYBBQUHMAKGF2h0dHA6Ly95ZTEuaS5sZW5jci5vcmcvMCsGA1UdEQQk
+MCKCDWZvbWlub21hcnQuaW6CEXd3dy5mb21pbm9tYXJ0LmluMBMGA1UdIAQMMAow
+CAYGZ4EMAQIBMC4GA1UdHwQnMCUwI6AhoB+GHWh0dHA6Ly95ZTEuYy5sZW5jci5v
+cmcvNDEuY3JsMIIBDQYKKwYBBAHWeQIEAgSB/gSB+wD5AHcAwjF+V0UZo0Xufzje
+spBB68fCIVoiv3/Vta12mtkOUs0AAAGfR+RVaQAABAMASDBGAiEA28Rjl0SRX2ID
+wFDaqHCJ6hr/8HU2G/mbD+w+VDbJUsQCIQCkz+3E2hbxmDrXyvinSU53Vfv5Mda/
+H+vcpa30LjwSqQB+ABqLnWsP/r+BtHk5xtIxCobW0QLU8EbiGCyd419eJiXvAAAB
+n0fkV0kACAAABQAn8ZWMBAMARzBFAiByRojEg+6dQDv5edLtYnQMOMQtZ43INzge
+6qMyRp2dpQIhAIk4C2UTzxbfaMqoaaT++89pVO5DIwuZkBKQPz6SH8z6MAoGCCqG
+SM49BAMDA2cAMGQCMCxFV56ZKc4z9MVkqWKzihMcET7LfZdApGrtYTOHkVNBTG1I
+9b4EJh+VPblUqy/jcwIweRLyEsT5HVmIz++o9VpSLWP7siRobjYFRHin6XbUfVTH
+gMoUhBt1JTzXzQ/jXVo7
+-----END CERTIFICATE-----
+
+VALIDITY NOTE
+-------------
+This certificate is issued by Let's Encrypt and is valid for approximately 90 days.
+Hostinger automatically renews the certificate before expiry (Lifetime SSL).
+Current certificate expiry date: 2026-10-07.
+
+Generated on: 2026-07-20T11:01:16.704Z

@@ -2,7 +2,9 @@ export const PAYMATE_METHODS = {
   upi: {
     label: "UPI",
     PaymentMode: "UPI",
-    PaymentType: "VPA/QRCode",
+    PaymentType: "Intent",
+    TargetApp: "GPAY",
+    DeviceOS: "ANDROID",
   },
   debit: {
     label: "Debit Card",

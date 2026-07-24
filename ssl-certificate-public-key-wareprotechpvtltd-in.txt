@@ -1,0 +1,54 @@
+SSL CERTIFICATE AND PUBLIC KEY DETAILS
+======================================
+
+Merchant / Website: wareprotechpvtltd.in
+Covered domains: wareprotechpvtltd.in, www.wareprotechpvtltd.in
+SSL Provider: Hostinger Lifetime SSL
+Certificate Issuer: Let's Encrypt (YE2)
+Certificate Subject: wareprotechpvtltd.in
+Valid From: 2026-07-09
+Valid Until: 2026-10-07
+Serial Number: 058187341C7B37D0E05C35F2082AF106BF25
+Fingerprint (SHA-256): 2E:53:11:FF:A0:97:75:19:5B:A0:DE:38:89:23:59:93:4B:AF:F7:29:EC:F3:4C:F7:D5:B6:F2:19:DA:BB:06:F1
+Signature Algorithm: ECDSA with SHA-384
+HTTPS Force Redirect: Enabled
+
+PUBLIC KEY (PEM FORMAT)
+-----------------------
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEYfMaxsJ2YdB6JC61WsyuYHkwRaBv
+CKkHlRF1LCmrywyB69Zibv+6wvReQqYow+4+KxAV6e/qyOz9yg+veOgprw==
+-----END PUBLIC KEY-----
+
+FULL CERTIFICATE (PEM FORMAT)
+-----------------------------
+-----BEGIN CERTIFICATE-----
+MIIDrzCCAzagAwIBAgISBYGHNBx7N9DgXDXyCCrxBr8lMAoGCCqGSM49BAMDMDMx
+CzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQwwCgYDVQQDEwNZ
+RTIwHhcNMjYwNzA5MTE0NDU5WhcNMjYxMDA3MTE0NDU4WjAfMR0wGwYDVQQDExR3
+YXJlcHJvdGVjaHB2dGx0ZC5pbjBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABGHz
+GsbCdmHQeiQutVrMrmB5MEWgbwipB5URdSwpq8sMgevWYm7/usL0XkKmKMPuPisQ
+Fenv6sjs/coPr3joKa+jggI8MIICODAOBgNVHQ8BAf8EBAMCB4AwEwYDVR0lBAww
+CgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQUPEFVDTU11ZXBdHih
+kDggTlfvZpIwHwYDVR0jBBgwFoAUuVnyjs8i8IbTN0j/dhQYuoLYVYcwMwYIKwYB
+BQUHAQEEJzAlMCMGCCsGAQUFBzAChhdodHRwOi8veWUyLmkubGVuY3Iub3JnLzA5
+BgNVHREEMjAwghR3YXJlcHJvdGVjaHB2dGx0ZC5pboIYd3d3LndhcmVwcm90ZWNo
+cHZ0bHRkLmluMBMGA1UdIAQMMAowCAYGZ4EMAQIBMC4GA1UdHwQnMCUwI6AhoB+G
+HWh0dHA6Ly95ZTIuYy5sZW5jci5vcmcvMzguY3JsMIIBDAYKKwYBBAHWeQIEAgSB
+/QSB+gD4AHYA1219ENGn9XfCx+lf1wC/+YLJM1pl4dCzAXMXwMjFaXcAAAGfRueT
++QAABAMARzBFAiAf26HpRdkvhtJTxDiaNua7zEPNLWh+KWM4s6BkSRDwuQIhAOYH
+7dQ8mojRs92z7QGRFMFLyWIWW+C7IQPZTOpmqU8IAH4AJuNkblhpISO8ND9HJDWb
+N5LNJFqI2BXTkzP9mRirRyMAAAGfRueRnQAIAAAFACc+0r4EAwBHMEUCIERDIQXC
+EYrJEd/iauT17PZSRb6yKb7mYDcJuWRSaSyNAiEAwiKuqn2YExQ6dKxMv8o4MrFz
+0Qah7vr+D1B6LQ5WLgYwCgYIKoZIzj0EAwMDZwAwZAIwIXte9j61SI/iT+bvkGxh
+/xo/XaQLXy66HpZd05o1OQRIGYvtVRLuEoOQEc2Rh5QGAjAMCSYp9QlQYCJvgZhi
+s8DDe7dzCSi71Q1OJP9PjSTQIvCjuVBXfF8+7PUTYB5/Row=
+-----END CERTIFICATE-----
+
+VALIDITY NOTE
+-------------
+This certificate is issued by Let's Encrypt and is valid for approximately 90 days.
+Hostinger automatically renews the certificate before expiry (Lifetime SSL).
+Current certificate expiry date: 2026-10-07.
+
+Generated on: 2026-07-20T11:01:18.641Z

@@ -1,0 +1,54 @@
+SSL CERTIFICATE AND PUBLIC KEY DETAILS
+======================================
+
+Merchant / Website: anidevmultitrading.in
+Covered domains: anidevmultitrading.in, www.anidevmultitrading.in
+SSL Provider: Hostinger Lifetime SSL
+Certificate Issuer: Let's Encrypt (YE1)
+Certificate Subject: anidevmultitrading.in
+Valid From: 2026-07-09
+Valid Until: 2026-10-07
+Serial Number: 0505A62BCFDCE324534B6E6331FEE998A4A3
+Fingerprint (SHA-256): A2:91:92:75:60:CA:C3:6B:1A:6E:4C:BF:26:1E:CB:49:90:53:25:DA:09:79:55:E3:00:EC:24:20:CF:9D:A0:00
+Signature Algorithm: ECDSA with SHA-384
+HTTPS Force Redirect: Enabled
+
+PUBLIC KEY (PEM FORMAT)
+-----------------------
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEp2fAWGdXfTcwGkma3ZruUUxghyIt
+SY5tsSZ2rQ8Ox9gffDbuNszhMKuHVweyFI1o4YtMv5VlCPB25hc6FAHuYA==
+-----END PUBLIC KEY-----
+
+FULL CERTIFICATE (PEM FORMAT)
+-----------------------------
+-----BEGIN CERTIFICATE-----
+MIIDtDCCAzqgAwIBAgISBQWmK8/c4yRTS25jMf7pmKSjMAoGCCqGSM49BAMDMDMx
+CzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQwwCgYDVQQDEwNZ
+RTEwHhcNMjYwNzA5MDcyMTM3WhcNMjYxMDA3MDcyMTM2WjAgMR4wHAYDVQQDExVh
+bmlkZXZtdWx0aXRyYWRpbmcuaW4wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASn
+Z8BYZ1d9NzAaSZrdmu5RTGCHIi1Jjm2xJnatDw7H2B98Nu42zOEwq4dXB7IUjWjh
+i0y/lWUI8HbmFzoUAe5go4ICPzCCAjswDgYDVR0PAQH/BAQDAgeAMBMGA1UdJQQM
+MAoGCCsGAQUFBwMBMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFKvC/xWEVPsOIM8B
+HtpBFuapGp1HMB8GA1UdIwQYMBaAFLsgykcL/tflnPmPCSqjjDdFsbzYMDMGCCsG
+AQUFBwEBBCcwJTAjBggrBgEFBQcwAoYXaHR0cDovL3llMS5pLmxlbmNyLm9yZy8w
+OwYDVR0RBDQwMoIVYW5pZGV2bXVsdGl0cmFkaW5nLmlughl3d3cuYW5pZGV2bXVs
+dGl0cmFkaW5nLmluMBMGA1UdIAQMMAowCAYGZ4EMAQIBMC4GA1UdHwQnMCUwI6Ah
+oB+GHWh0dHA6Ly95ZTEuYy5sZW5jci5vcmcvMzYuY3JsMIIBDQYKKwYBBAHWeQIE
+AgSB/gSB+wD5AH4ARq+GPTs+5Z+ld96oJF02sNntIqIj9GF3QSKUUu6VUF8AAAGf
+RfZ27AAIAAAFAAxONsYEAwBHMEUCIQCUkFRtrqj2GcUuwVSQ7V8AnAteJW76um9I
+OKwqxpZznwIgJK+M+6RVN8/Cm/48OwpGzLXYaP0DJFiWugpaznYYYQAAdwDXbX0Q
+0af1d8LH6V/XAL/5gskzWmXh0LMBcxfAyMVpdwAAAZ9F9nazAAAEAwBIMEYCIQCn
+JddFX3eTQVHBZ04ds4en0WJFR9/DxSKJG9C7xNG80gIhAKK8K7OpQRk5oK7v7K1K
+L4Mb3rASMA1ejjLl+EEZhPSKMAoGCCqGSM49BAMDA2gAMGUCME13rJIZ31sjtgRG
+o/2HTfKJhApzJUbB96WSGZI5sFILps5BMV068aB1eH/peDtswgIxAMcz0JYHraQQ
+Ji1avygbX0ot05w7ksv2pJacP16PmUukx37x/KWg8eyD8JdJZKa6dg==
+-----END CERTIFICATE-----
+
+VALIDITY NOTE
+-------------
+This certificate is issued by Let's Encrypt and is valid for approximately 90 days.
+Hostinger automatically renews the certificate before expiry (Lifetime SSL).
+Current certificate expiry date: 2026-10-07.
+
+Generated on: 2026-07-20T11:01:17.755Z

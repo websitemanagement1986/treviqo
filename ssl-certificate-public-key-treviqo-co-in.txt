@@ -1,0 +1,54 @@
+SSL CERTIFICATE AND PUBLIC KEY DETAILS
+======================================
+
+Merchant / Website: treviqo.co.in
+Covered domains: treviqo.co.in, www.treviqo.co.in
+SSL Provider: Hostinger Lifetime SSL
+Certificate Issuer: Let's Encrypt (YE2)
+Certificate Subject: treviqo.co.in
+Valid From: 2026-07-11
+Valid Until: 2027-07-10
+Serial Number: 05117B795B0988DCD23436B422377B264933
+Fingerprint (SHA-256): F0:02:B4:2A:AE:48:70:B2:A6:88:D4:FE:8C:00:C9:50:EE:6D:3A:09:25:CD:CC:00:F0:60:A0:FA:AB:A4:14:4F
+Signature Algorithm: ECDSA with SHA-384
+HTTPS Force Redirect: Enabled
+
+PUBLIC KEY (PEM FORMAT)
+-----------------------
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWvhDowOUMyRE/usIArn0izzHQc9w
+pI54N4DP+OjlQ8xL69hfJe62AhdNgnd6rHpQ9pnHLoWU7ERrDASvcIoIJQ==
+-----END PUBLIC KEY-----
+
+FULL CERTIFICATE (PEM FORMAT)
+-----------------------------
+-----BEGIN CERTIFICATE-----
+MIIDmzCCAyGgAwIBAgISBRF7eVsJiNzSNDa0Ijd7JkkzMAoGCCqGSM49BAMDMDMx
+CzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQwwCgYDVQQDEwNZ
+RTIwHhcNMjYwNzExMTIyODQ1WhcNMjYxMDA5MTIyODQ0WjAYMRYwFAYDVQQDEw10
+cmV2aXFvLmNvLmluMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWvhDowOUMyRE
+/usIArn0izzHQc9wpI54N4DP+OjlQ8xL69hfJe62AhdNgnd6rHpQ9pnHLoWU7ERr
+DASvcIoIJaOCAi4wggIqMA4GA1UdDwEB/wQEAwIHgDATBgNVHSUEDDAKBggrBgEF
+BQcDATAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBTechgAx6kqBoDCKRGurJ/Yo1tR
+RDAfBgNVHSMEGDAWgBS5WfKOzyLwhtM3SP92FBi6gthVhzAzBggrBgEFBQcBAQQn
+MCUwIwYIKwYBBQUHMAKGF2h0dHA6Ly95ZTIuaS5sZW5jci5vcmcvMCsGA1UdEQQk
+MCKCDXRyZXZpcW8uY28uaW6CEXd3dy50cmV2aXFvLmNvLmluMBMGA1UdIAQMMAow
+CAYGZ4EMAQIBMC4GA1UdHwQnMCUwI6AhoB+GHWh0dHA6Ly95ZTIuYy5sZW5jci5v
+cmcvNTIuY3JsMIIBDAYKKwYBBAHWeQIEAgSB/QSB+gD4AHYA2AlVO5RPev/IFhlv
+lE+Fq7D4/F6HVSYPFdEucrtFSxQAAAGfUVxb3QAABAMARzBFAiEAj6LYDKmXGara
+QvZccoohHx8LHjwe7xTaeEm8lUoZsDICIGillFW6ZOukQYBgCQXfxk+uVQ1Ps4HD
+acSyf3WLviMCAH4ARq+GPTs+5Z+ld96oJF02sNntIqIj9GF3QSKUUu6VUF8AAAGf
+UVxcLQAIAAAFAAyTv8AEAwBHMEUCIQDXtPY2ptmMTlOsNfa33NTUmIdTB9bwb4sm
+0Q4v1JEBQwIgQrjMZOGLiceUS6C8zq4j7o9+l3rmINESjOibh08eAuEwCgYIKoZI
+zj0EAwMDaAAwZQIwKw5ooubarLR+sTOHjhVAao+Nkzdmw1EVGhTm2IlCNgzxvyE2
+JdOqQsr+nsMrgPFlAjEAnCcuLmEnehs37VfCUoDoLDQLrt4ehnfpn6U0k0C8RxRB
+CCaBtPlYOAJAAKcPzWNY
+-----END CERTIFICATE-----
+
+VALIDITY NOTE
+-------------
+This certificate is issued by Let's Encrypt and is valid for approximately 365 days.
+Hostinger automatically renews the certificate before expiry (Lifetime SSL).
+Current certificate expiry date: 2027-07-10.
+
+Generated on: 2026-07-20T11:01:15.945Z
