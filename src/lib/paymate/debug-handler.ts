@@ -190,14 +190,13 @@ function maskId(value: string) {
 
 function buildSamplePayload(
   orderId: string,
-  config: ReturnType<typeof getPaymateConfig>,
+  _config: ReturnType<typeof getPaymateConfig>,
   options: {
     methodKey?: string;
     PaymentMode?: string;
     PaymentType?: string;
     TargetApp?: string;
     DeviceOS?: string;
-    includeReturnUrl?: boolean;
   } = {}
 ) {
   const methodKey = options.methodKey || "upi";
@@ -216,11 +215,7 @@ function buildSamplePayload(
     UDF1: [{ abc: "def" }],
     UDF2: [{ abc: "def" }, { abc: "def" }],
     UDF3: [],
-    Remarks: "Payments",
   };
-  if (options.includeReturnUrl !== false) {
-    transactionDetails.ReturnURL = `${config.siteUrl}/paymate-return?orderId=${orderId}`;
-  }
   const paymentMethod: Record<string, string> = {
     PaymentMode: paymentMode,
     PaymentType: paymentType,
