@@ -192,10 +192,10 @@ function loadPartnerPrivateKey(appRoot: string) {
 
 export function getPaymateConfig(): PaymateConfig {
   const appRoot = process.cwd();
-  const merchantId = process.env.PAYMATE_MERCHANT_ID;
-  const terminalId = process.env.PAYMATE_TERMINAL_ID;
-  const businessXpressId = process.env.PAYMATE_BUSINESS_XPRESS_ID;
-  const iv = process.env.PAYMATE_IV || "54327CD65487ECAB";
+  const merchantId = (process.env.PAYMATE_MERCHANT_ID || "").trim();
+  const terminalId = (process.env.PAYMATE_TERMINAL_ID || "").trim();
+  const businessXpressId = (process.env.PAYMATE_BUSINESS_XPRESS_ID || "").trim();
+  const iv = (process.env.PAYMATE_IV || "54327CD65487ECAB").trim();
   const endpoint =
     process.env.PAYMATE_ENDPOINT ||
     "https://paymate.in/PaymatePartnerStack/api/v2/CollectPayments";
@@ -221,7 +221,7 @@ export function getPaymateConfig(): PaymateConfig {
     paymatePublicCert,
     partnerPrivateKey: partner.pem,
     partnerPrivateKeySource: partner.source,
-    companyName: process.env.PAYMATE_COMPANY_NAME || "Treviqo Traders (OPC) Pvt Ltd",
-    referenceCode: process.env.PAYMATE_REFERENCE_CODE || "TREVIQO01",
+    companyName: (process.env.PAYMATE_COMPANY_NAME || "Treviqo Traders (OPC) Pvt Ltd").trim(),
+    referenceCode: (process.env.PAYMATE_REFERENCE_CODE || "TREVIQO01").trim(),
   };
 }

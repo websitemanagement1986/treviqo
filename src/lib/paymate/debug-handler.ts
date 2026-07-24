@@ -187,14 +187,14 @@ function maskId(value: string) {
   return `${value.slice(0, 8)}...${value.slice(-4)}`;
 }
 
-function buildSamplePayload(orderId: string) {
+function buildSamplePayload(orderId: string, referenceCode: string) {
   return {
     CollectionDetails: [
       {
         TransactionDetails: {
           OrderID: orderId,
           CompanyName: "Rahul",
-          ReferenceCode: "TEST01",
+          ReferenceCode: referenceCode,
           ContactXpressID: "",
           ReceipentMobileNo: "",
           RecipentEmailAddress: "",
@@ -365,8 +365,8 @@ export async function runPaymateDebug(debugKey?: string | null) {
       consistent: allIps.length === 1,
     };
 
-    const orderId = `DBG${Date.now()}`.slice(0, 20);
-    const payload = buildSamplePayload(orderId);
+    const orderId = `UPIOITest${String(Date.now()).slice(-3)}`;
+    const payload = buildSamplePayload(orderId, config.referenceCode);
     const plainJsonString = JSON.stringify(payload);
     const encryptedBody = encryptRequest(payload, config.paymatePublicCert, config.iv);
     const jsonBody = JSON.stringify(encryptedBody);
@@ -374,6 +374,21 @@ export async function runPaymateDebug(debugKey?: string | null) {
     report.plain_json_string = plainJsonString;
     report.plain_json_length = plainJsonString.length;
     report.has_extra_spaces = /  /.test(plainJsonString) || /\t/.test(plainJsonString);
+    report.sample_comparison = {
+      differences_from_paymate_sample: [
+        { field: "OrderID", sample: "UPIOITest189", ours: orderId },
+        { field: "CompanyName", sample: "Sagar Express", ours: "Rahul" },
+        { field: "ReferenceCode", sample: "SE01", ours: config.referenceCode },
+      ],
+      note: "SE01 in PayMate sample is merchant-specific. Treviqo registered code is TREVIQO01.",
+    };
+    report.env_whitespace_audit = {
+      merchant_id_has_whitespace: (process.env.PAYMATE_MERCHANT_ID || "") !== (process.env.PAYMATE_MERCHANT_ID || "").trim(),
+      terminal_id_has_whitespace: (process.env.PAYMATE_TERMINAL_ID || "") !== (process.env.PAYMATE_TERMINAL_ID || "").trim(),
+      business_xpress_id_has_whitespace: (process.env.PAYMATE_BUSINESS_XPRESS_ID || "") !== (process.env.PAYMATE_BUSINESS_XPRESS_ID || "").trim(),
+      reference_code_has_whitespace: (process.env.PAYMATE_REFERENCE_CODE || "") !== (process.env.PAYMATE_REFERENCE_CODE || "").trim(),
+      reference_code_used: config.referenceCode,
+    };
 
     const baseHeaders = {
       "Content-Type": "application/json",
