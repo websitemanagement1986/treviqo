@@ -27,3 +27,14 @@ console.log("Recommended for Hostinger (avoids newline/base64 corruption):\n");
 console.log("Env name: PAYMATE_PARTNER_PRIVATE_KEY_B64");
 console.log("Env value length:", b64.length, "characters\n");
 console.log(b64);
+
+const paymateCertPath = path.join(__dirname, "..", "certs", "paymate-public.cer");
+if (fs.existsSync(paymateCertPath)) {
+  const certPem = fs.readFileSync(paymateCertPath, "utf8");
+  crypto.createPublicKey(certPem);
+  const certB64 = Buffer.from(certPem, "utf8").toString("base64");
+  console.log("\n--- PayMate public certificate (for Hostinger when certs/ folder missing) ---\n");
+  console.log("Env name: PAYMATE_PUBLIC_CERT_B64");
+  console.log("Env value length:", certB64.length, "characters\n");
+  console.log(certB64);
+}

@@ -144,6 +144,24 @@ function loadPem({
   return pem;
 }
 
+function loadPaymatePublicCert(appRoot: string): string {
+  const b64 = process.env.PAYMATE_PUBLIC_CERT_B64;
+  if (b64) {
+    const pem = decodeBase64Pem(b64, "PayMate public certificate");
+    validateCertificate(pem, "PayMate public certificate");
+    return pem;
+  }
+
+  return loadPem({
+    label: "PayMate public certificate",
+    inlineEnv: process.env.PAYMATE_PUBLIC_CERT,
+    pathEnv: process.env.PAYMATE_PUBLIC_CERT_PATH,
+    defaultRelativePaths: ["certs/paymate-public.cer"],
+    appRoot,
+    kind: "certificate",
+  });
+}
+
 function loadPartnerPrivateKey(appRoot: string) {
   const b64 = process.env.PAYMATE_PARTNER_PRIVATE_KEY_B64;
   if (b64) {
@@ -189,14 +207,7 @@ export function getPaymateConfig(): PaymateConfig {
     );
   }
 
-  const paymatePublicCert = loadPem({
-    label: "PayMate public certificate",
-    inlineEnv: process.env.PAYMATE_PUBLIC_CERT,
-    pathEnv: process.env.PAYMATE_PUBLIC_CERT_PATH,
-    defaultRelativePaths: ["certs/paymate-public.cer"],
-    appRoot,
-    kind: "certificate",
-  });
+  const paymatePublicCert = loadPaymatePublicCert(appRoot);
 
   const partner = loadPartnerPrivateKey(appRoot);
 
