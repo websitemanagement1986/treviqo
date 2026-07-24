@@ -13,7 +13,6 @@ import {
   isSuccessPayload,
   parsePayMateResponse,
 } from "@/lib/paymate/client";
-import { resolvePaymateMethod } from "@/lib/paymate/payment-methods";
 
 const resolve4 = promisify(dns.resolve4);
 const resolve6 = promisify(dns.resolve6);
@@ -188,47 +187,22 @@ function maskId(value: string) {
   return `${value.slice(0, 8)}...${value.slice(-4)}`;
 }
 
-function buildSamplePayload(
-  orderId: string,
-  _config: ReturnType<typeof getPaymateConfig>,
-  options: {
-    methodKey?: string;
-    PaymentMode?: string;
-    PaymentType?: string;
-    TargetApp?: string;
-    DeviceOS?: string;
-  } = {}
-) {
-  const methodKey = options.methodKey || "upi";
-  const paymateMethod = resolvePaymateMethod(methodKey);
-  const paymentMode = options.PaymentMode || paymateMethod.PaymentMode;
-  const paymentType = options.PaymentType || paymateMethod.PaymentType;
-  const targetApp = options.TargetApp || "GPAY";
-  const deviceOS = options.DeviceOS || "ANDROID";
-  const transactionDetails: Record<string, unknown> = {
-    OrderID: orderId,
-    CompanyName: "Rahul",
-    ReferenceCode: "",
-    ContactXpressID: "",
-    ReceipentMobileNo: "",
-    RecipentEmailAddress: "",
-    UDF1: [{ abc: "def" }],
-    UDF2: [{ abc: "def" }, { abc: "def" }],
-    UDF3: [],
-    Remarks: "Payments",
-  };
-  const paymentMethod: Record<string, string> = {
-    PaymentMode: paymentMode,
-    PaymentType: paymentType,
-  };
-  if (paymentType === "Intent") {
-    paymentMethod.TargetApp = targetApp;
-    paymentMethod.DeviceOS = deviceOS;
-  }
+function buildSamplePayload(orderId: string) {
   return {
     CollectionDetails: [
       {
-        TransactionDetails: transactionDetails,
+        TransactionDetails: {
+          OrderID: orderId,
+          CompanyName: "Rahul",
+          ReferenceCode: "",
+          ContactXpressID: "",
+          ReceipentMobileNo: "",
+          RecipentEmailAddress: "",
+          UDF1: [{ abc: "def" }],
+          UDF2: [{ abc: "def" }, { abc: "def" }],
+          UDF3: [],
+          Remarks: "Payments",
+        },
         INVOICE: {
           InvoiceNumber: "",
           InvoiceStartDate: "",
@@ -237,7 +211,12 @@ function buildSamplePayload(
           GSTType: "",
           GST: "",
         },
-        PaymentMethod: paymentMethod,
+        PaymentMethod: {
+          PaymentMode: "UPI",
+          PaymentType: "Intent",
+          TargetApp: "GPAY",
+          DeviceOS: "IOS",
+        },
         SplitMDR: {
           BuyerCharges: "0",
           SupplierCharges: "100",
@@ -387,7 +366,7 @@ export async function runPaymateDebug(debugKey?: string | null) {
     };
 
     const orderId = `DBG${Date.now()}`.slice(0, 20);
-    const payload = buildSamplePayload(orderId, config);
+    const payload = buildSamplePayload(orderId);
     const encryptedBody = encryptRequest(payload, config.paymatePublicCert, config.iv);
     const jsonBody = JSON.stringify(encryptedBody);
 
@@ -482,34 +461,7 @@ export async function runPaymateDebug(debugKey?: string | null) {
       }
     }
 
-    const upiVariants = [
-      { id: "upi_intent_gpay_android", hypothesis: "UPI Intent + GPAY + ANDROID", PaymentMode: "UPI", PaymentType: "Intent", TargetApp: "GPAY", DeviceOS: "ANDROID" },
-      { id: "upi_intent_gpay_ios", hypothesis: "UPI Intent + GPAY + IOS", PaymentMode: "UPI", PaymentType: "Intent", TargetApp: "GPAY", DeviceOS: "IOS" },
-      { id: "upi_intent_phonepe", hypothesis: "UPI Intent + PHONEPE + ANDROID", PaymentMode: "UPI", PaymentType: "Intent", TargetApp: "PHONEPE", DeviceOS: "ANDROID" },
-      { id: "upi_intent_paytm", hypothesis: "UPI Intent + PAYTM + ANDROID", PaymentMode: "UPI", PaymentType: "Intent", TargetApp: "PAYTM", DeviceOS: "ANDROID" },
-      { id: "upi_vpa_qrcode", hypothesis: "UPI + VPA/QRCode (hosted checkout)", PaymentMode: "UPI", PaymentType: "VPA/QRCode" },
-    ];
     report.upi_payment_variations = [];
-    for (const variant of upiVariants) {
-      const variantOrderId = `DBG${Date.now()}${variant.id.slice(-3)}`.slice(0, 20);
-      try {
-        const variantPayload = buildSamplePayload(variantOrderId, config, variant);
-        const result = await postPaymateVariant(config, baseHeaders, variantPayload);
-        (report.upi_payment_variations as Record<string, unknown>[]).push({
-          id: variant.id,
-          hypothesis: variant.hypothesis,
-          payment_mode: variant.PaymentMode,
-          payment_type: variant.PaymentType,
-          ...result,
-        });
-      } catch (err) {
-        (report.upi_payment_variations as Record<string, unknown>[]).push({
-          id: variant.id,
-          hypothesis: variant.hypothesis,
-          error: err instanceof Error ? err.message : String(err),
-        });
-      }
-    }
     const upiSuccess = (report.upi_payment_variations as Record<string, unknown>[]).find((v) => v.success);
     if (upiSuccess) {
       report.interpretation_upi_winner = {
