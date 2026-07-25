@@ -9,6 +9,7 @@ import { encryptRequest } from "@/lib/paymate/crypto";
 import { getPaymateConfig, paymateV1CollectEndpoint } from "@/lib/paymate/config";
 import {
   buildCollectPaymentsPayload,
+  buildPaymateAntaraV2SamplePayload,
   buildPaymateOrderId,
   diffAgainstWorkingMerchant,
   formatPaymateAmount,
@@ -207,13 +208,22 @@ async function runCombinationTests(
     id: string;
     hypothesis: string;
     doc_ref?: string;
-    options: Parameters<typeof buildCollectPaymentsPayload>[0];
+    options?: Parameters<typeof buildCollectPaymentsPayload>[0];
+    rawPayload?: object;
     endpoint?: string;
   };
 
   const v1Endpoint = paymateV1CollectEndpoint(config.endpoint);
 
   const specs: Spec[] = [
+    {
+      id: "paymate_antara_v2_exact",
+      hypothesis:
+        "PayMate sample: Antara, blank mobile/email/invoice fields, InvoiceAmount 201, v2 Intent",
+      doc_ref: "PayMate support Antara UPI Intent sample",
+      endpoint: config.endpointV2,
+      rawPayload: buildPaymateAntaraV2SamplePayload(),
+    },
     {
       id: "baseline_blank_ref_android",
       hypothesis: "Blank ReferenceCode + UPI Intent + ANDROID + 100.00 (v2)",
@@ -412,7 +422,14 @@ async function runCombinationTests(
   const results: Record<string, unknown>[] = [];
   for (const spec of specs) {
     try {
-      const payload = buildCollectPaymentsPayload(spec.options);
+      const payload =
+        spec.rawPayload ??
+        buildCollectPaymentsPayload(spec.options ?? { orderId: buildPaymateOrderId("long") });
+      const collection = (payload as { CollectionDetails: Record<string, unknown>[] })
+        .CollectionDetails[0];
+      const tx = collection.TransactionDetails as Record<string, string>;
+      const inv = collection.INVOICE as Record<string, string>;
+      const pm = collection.PaymentMethod as Record<string, string>;
       const result = await postPaymateVariant(
         config,
         baseHeaders,
@@ -423,10 +440,10 @@ async function runCombinationTests(
         id: spec.id,
         hypothesis: spec.hypothesis,
         doc_ref: spec.doc_ref,
-        reference_code: payload.CollectionDetails[0].TransactionDetails.ReferenceCode,
-        payment_mode: payload.CollectionDetails[0].PaymentMethod.PaymentMode,
-        payment_type: payload.CollectionDetails[0].PaymentMethod.PaymentType,
-        invoice_amount: payload.CollectionDetails[0].INVOICE.InvoiceAmount,
+        reference_code: tx.ReferenceCode,
+        payment_mode: pm.PaymentMode,
+        payment_type: pm.PaymentType,
+        invoice_amount: inv.InvoiceAmount,
         ...result,
       });
     } catch (err) {
@@ -897,6 +914,7 @@ export async function runPaymateDebug(debugKey?: string | null) {
     }
 
     const docVariantIds = [
+      "paymate_antara_v2_exact",
       "checkout_upi_vpa_v2",
       "checkout_upi_qrcode_v2",
       "checkout_upi_vpa_slash_qrcode_v2",
@@ -1057,6 +1075,48 @@ export async function runPaymateDebug(debugKey?: string | null) {
       "v1 + ReferenceCode (UPI Intent doc flow)"
     );
     report.paymate_call_v1_ref = paymateCallV1Ref;
+
+    const antaraOrderId = "Ordupi20260304777259";
+    const antaraPayload = buildPaymateAntaraV2SamplePayload(antaraOrderId);
+    const antaraEncrypted = encryptRequest(antaraPayload, config.paymatePublicCert, config.iv);
+    const antaraT0 = Date.now();
+    const antaraRes = await fetch(config.endpointV2, {
+      method: "POST",
+      headers: baseHeaders,
+      body: JSON.stringify(antaraEncrypted),
+      signal: AbortSignal.timeout(10000),
+    });
+    const antaraTxt = await antaraRes.text();
+    let antaraBody: Record<string, unknown>;
+    try {
+      antaraBody = JSON.parse(antaraTxt) as Record<string, unknown>;
+    } catch {
+      antaraBody = { raw_preview: antaraTxt.slice(0, 300) };
+    }
+    const antaraAnalyzed = analyzePaymateBody(antaraBody, config);
+    report.paymate_call_antara_v2_exact = {
+      label: "v2 + PayMate Antara exact sample",
+      duration_ms: Date.now() - antaraT0,
+      request: {
+        method: "POST",
+        url: config.endpointV2,
+        headers: baseHeaders,
+        body: antaraEncrypted,
+        plain_text_payload: antaraPayload,
+      },
+      response: {
+        http_status: antaraRes.status,
+        body: antaraBody,
+        parsed: antaraAnalyzed.parsed,
+      },
+      sample_order_id: antaraOrderId,
+      status_code: antaraAnalyzed.status_code,
+      description: antaraAnalyzed.description || null,
+      payment_url: antaraAnalyzed.payment_url || null,
+      payment_url_scheme: paymentUrlScheme(antaraAnalyzed.payment_url),
+      success: Boolean(antaraAnalyzed.success),
+    };
+
     report.recommended_try = {
       endpoint: config.endpointV1,
       reference_code: config.referenceCode || "TREVIQO01",

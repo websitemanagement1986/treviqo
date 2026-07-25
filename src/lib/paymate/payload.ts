@@ -33,6 +33,46 @@ export type CollectPaymentsOptions = {
   returnUrl?: string;
 };
 
+/** PayMate support sample — v2 UPI Intent (Antara), field-for-field as provided. */
+export function buildPaymateAntaraV2SamplePayload(orderId = "Ordupi20260304777259") {
+  return {
+    CollectionDetails: [
+      {
+        TransactionDetails: {
+          OrderID: orderId,
+          CompanyName: "Antara",
+          ReferenceCode: "",
+          ReceipentMobileNo: "",
+          RecipentEmailAddress: "",
+          ContactXpressID: "",
+          UDF1: [],
+          UDF2: [],
+          UDF3: [],
+          Remarks: "Test for collection",
+        },
+        INVOICE: {
+          InvoiceNumber: "",
+          InvoiceStartDate: "",
+          InvoiceTerm: "",
+          InvoiceAmount: "201",
+          GSTType: "",
+          GST: "",
+        },
+        PaymentMethod: {
+          PaymentMode: "UPI",
+          PaymentType: "Intent",
+          DeviceOS: "ANDROID",
+          TargetApp: "GPAY",
+        },
+        SplitMDR: {
+          BuyerCharges: "0",
+          SupplierCharges: "100",
+        },
+      },
+    ],
+  };
+}
+
 export function buildPaymateOrderId(style: "long" | "short" = "long"): string {
   if (style === "short") {
     return `UPIOITest${String(Date.now()).slice(-3)}`;
