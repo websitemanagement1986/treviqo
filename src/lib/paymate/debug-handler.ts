@@ -7,6 +7,7 @@ import path from "path";
 import { promisify } from "util";
 import { encryptRequest } from "@/lib/paymate/crypto";
 import { getPaymateConfig } from "@/lib/paymate/config";
+import { formatPaymateAmount, getPaymateInvoiceDate } from "@/lib/paymate/payload";
 import {
   extractPaymateMessage,
   extractPaymentUrl,
@@ -193,21 +194,21 @@ function buildSamplePayload(orderId: string, referenceCode: string) {
       {
         TransactionDetails: {
           OrderID: orderId,
-          CompanyName: "Rahul",
+          CompanyName: "Rahul Kumar",
           ReferenceCode: referenceCode,
           ContactXpressID: "",
-          ReceipentMobileNo: "",
-          RecipentEmailAddress: "",
-          UDF1: [{ abc: "def" }],
-          UDF2: [{ abc: "def" }, { abc: "def" }],
+          ReceipentMobileNo: "9898989898",
+          RecipentEmailAddress: "test@treviqo.co.in",
+          UDF1: [],
+          UDF2: [],
           UDF3: [],
           Remarks: "Payments",
         },
         INVOICE: {
-          InvoiceNumber: "",
-          InvoiceStartDate: "",
+          InvoiceNumber: `INV${orderId}`,
+          InvoiceStartDate: getPaymateInvoiceDate(),
           InvoiceTerm: "",
-          InvoiceAmount: "100",
+          InvoiceAmount: formatPaymateAmount(100),
           GSTType: "",
           GST: "",
         },
@@ -215,7 +216,7 @@ function buildSamplePayload(orderId: string, referenceCode: string) {
           PaymentMode: "UPI",
           PaymentType: "Intent",
           TargetApp: "GPAY",
-          DeviceOS: "IOS",
+          DeviceOS: "ANDROID",
         },
         SplitMDR: {
           BuyerCharges: "0",
@@ -375,12 +376,27 @@ export async function runPaymateDebug(debugKey?: string | null) {
     report.plain_json_length = plainJsonString.length;
     report.has_extra_spaces = /  /.test(plainJsonString) || /\t/.test(plainJsonString);
     report.sample_comparison = {
-      differences_from_paymate_sample: [
-        { field: "OrderID", sample: "UPIOITest189", ours: orderId },
-        { field: "CompanyName", sample: "Sagar Express", ours: "Rahul" },
-        { field: "ReferenceCode", sample: "SE01", ours: config.referenceCode },
-      ],
-      note: "SE01 in PayMate sample is merchant-specific. Treviqo registered code is TREVIQO01.",
+      working_merchant_reference: {
+        ReceipentMobileNo: "9898989898",
+        RecipentEmailAddress: "filled",
+        UDF1_UDF2: "empty arrays",
+        InvoiceNumber: "INV + OrderID",
+        InvoiceStartDate: "YYYY-MM-DD",
+        InvoiceAmount: "4.00 (two decimals)",
+        DeviceOS: "ANDROID",
+        CompanyName: "Rakesh Kumar (name with space)",
+      },
+      ours_now: {
+        ReceipentMobileNo: "9898989898",
+        ReceipentEmailAddress: "test@treviqo.co.in",
+        UDF1_UDF2: "empty arrays",
+        InvoiceNumber: `INV${orderId}`,
+        InvoiceStartDate: getPaymateInvoiceDate(),
+        InvoiceAmount: formatPaymateAmount(100),
+        DeviceOS: "ANDROID",
+        CompanyName: "Rahul Kumar",
+        ReferenceCode: config.referenceCode,
+      },
     };
     report.env_whitespace_audit = {
       merchant_id_has_whitespace: (process.env.PAYMATE_MERCHANT_ID || "") !== (process.env.PAYMATE_MERCHANT_ID || "").trim(),

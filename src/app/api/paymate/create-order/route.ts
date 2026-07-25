@@ -10,6 +10,7 @@ import {
 import { getPaymateConfig } from "@/lib/paymate/config";
 import { resolvePaymateMethod } from "@/lib/paymate/payment-methods";
 import { savePendingOrder } from "@/lib/paymate/orders";
+import { formatPaymateAmount, getPaymateInvoiceDate } from "@/lib/paymate/payload";
 
 function buildOrderId() {
   return `TRV${Date.now()}`.slice(0, 20);
@@ -49,17 +50,17 @@ export async function POST(req: NextRequest) {
             ContactXpressID: "",
             ReceipentMobileNo: String(customer.phone).replace(/\D/g, "").slice(-10),
             RecipentEmailAddress: customer.email,
-            UDF1: [{ order: orderId }],
-            UDF2: [{ site: "treviqo" }],
+            UDF1: [],
+            UDF2: [],
             UDF3: [],
             Remarks: "Payments",
             ReturnURL: returnUrl,
           },
           INVOICE: {
-            InvoiceNumber: orderId,
-            InvoiceStartDate: "",
+            InvoiceNumber: `INV${orderId}`,
+            InvoiceStartDate: getPaymateInvoiceDate(),
             InvoiceTerm: "",
-            InvoiceAmount: String(total),
+            InvoiceAmount: formatPaymateAmount(total),
             GSTType: "",
             GST: "",
           },
