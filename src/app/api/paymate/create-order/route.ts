@@ -10,7 +10,7 @@ import {
 import { getPaymateConfig } from "@/lib/paymate/config";
 import { resolvePaymateMethod } from "@/lib/paymate/payment-methods";
 import { savePendingOrder } from "@/lib/paymate/orders";
-import { formatPaymateAmount, getPaymateInvoiceDate } from "@/lib/paymate/payload";
+import { formatPaymateAmount, getPaymateInvoiceDate, PAYMATE_BLANK_FIELDS } from "@/lib/paymate/payload";
 
 function buildOrderId() {
   return `TRV${Date.now()}`.slice(0, 20);
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
             OrderID: orderId,
             CompanyName: customer.name,
             ReferenceCode: config.referenceCode,
-            ContactXpressID: "",
+            ContactXpressID: PAYMATE_BLANK_FIELDS.ContactXpressID,
             ReceipentMobileNo: String(customer.phone).replace(/\D/g, "").slice(-10),
             RecipentEmailAddress: customer.email,
             UDF1: [],
@@ -59,10 +59,10 @@ export async function POST(req: NextRequest) {
           INVOICE: {
             InvoiceNumber: `INV${orderId}`,
             InvoiceStartDate: getPaymateInvoiceDate(),
-            InvoiceTerm: "",
+            InvoiceTerm: PAYMATE_BLANK_FIELDS.InvoiceTerm,
             InvoiceAmount: formatPaymateAmount(total),
-            GSTType: "",
-            GST: "",
+            GSTType: PAYMATE_BLANK_FIELDS.GSTType,
+            GST: PAYMATE_BLANK_FIELDS.GST,
           },
           PaymentMethod: paymentMethodObj,
           SplitMDR: {

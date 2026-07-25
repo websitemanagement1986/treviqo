@@ -7,3 +7,11 @@ export function formatPaymateAmount(amount: number): string {
 export function getPaymateInvoiceDate(): string {
   return new Date().toISOString().slice(0, 10);
 }
+
+/** Empty-string fields present in working live merchant requests (must be sent, not omitted). */
+export const PAYMATE_BLANK_FIELDS = {
+  ContactXpressID: "",
+  InvoiceTerm: "",
+  GSTType: "",
+  GST: "",
+} as const;

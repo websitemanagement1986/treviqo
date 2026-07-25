@@ -211,6 +211,10 @@ export function getPaymateConfig(): PaymateConfig {
 
   const partner = loadPartnerPrivateKey(appRoot);
 
+  const referenceCodeEnv = process.env.PAYMATE_REFERENCE_CODE;
+  const referenceCode =
+    referenceCodeEnv === undefined ? "TREVIQO01" : referenceCodeEnv.trim();
+
   return {
     merchantId,
     terminalId,
@@ -222,6 +226,6 @@ export function getPaymateConfig(): PaymateConfig {
     partnerPrivateKey: partner.pem,
     partnerPrivateKeySource: partner.source,
     companyName: (process.env.PAYMATE_COMPANY_NAME || "Treviqo Traders (OPC) Pvt Ltd").trim(),
-    referenceCode: (process.env.PAYMATE_REFERENCE_CODE || "TREVIQO01").trim(),
+    referenceCode,
   };
 }

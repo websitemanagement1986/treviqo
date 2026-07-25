@@ -7,7 +7,7 @@ import path from "path";
 import { promisify } from "util";
 import { encryptRequest } from "@/lib/paymate/crypto";
 import { getPaymateConfig } from "@/lib/paymate/config";
-import { formatPaymateAmount, getPaymateInvoiceDate } from "@/lib/paymate/payload";
+import { formatPaymateAmount, getPaymateInvoiceDate, PAYMATE_BLANK_FIELDS } from "@/lib/paymate/payload";
 import {
   extractPaymateMessage,
   extractPaymentUrl,
@@ -188,15 +188,19 @@ function maskId(value: string) {
   return `${value.slice(0, 8)}...${value.slice(-4)}`;
 }
 
-function buildSamplePayload(orderId: string, referenceCode: string) {
+function buildSamplePayload(
+  orderId: string,
+  referenceCode: string,
+  blankOverrides: Record<string, string> = {}
+) {
   return {
     CollectionDetails: [
       {
         TransactionDetails: {
           OrderID: orderId,
           CompanyName: "Rahul Kumar",
-          ReferenceCode: referenceCode,
-          ContactXpressID: "",
+          ReferenceCode: blankOverrides.ReferenceCode ?? referenceCode,
+          ContactXpressID: blankOverrides.ContactXpressID ?? PAYMATE_BLANK_FIELDS.ContactXpressID,
           ReceipentMobileNo: "9898989898",
           RecipentEmailAddress: "test@treviqo.co.in",
           UDF1: [],
@@ -207,10 +211,10 @@ function buildSamplePayload(orderId: string, referenceCode: string) {
         INVOICE: {
           InvoiceNumber: `INV${orderId}`,
           InvoiceStartDate: getPaymateInvoiceDate(),
-          InvoiceTerm: "",
+          InvoiceTerm: blankOverrides.InvoiceTerm ?? PAYMATE_BLANK_FIELDS.InvoiceTerm,
           InvoiceAmount: formatPaymateAmount(100),
-          GSTType: "",
-          GST: "",
+          GSTType: blankOverrides.GSTType ?? PAYMATE_BLANK_FIELDS.GSTType,
+          GST: blankOverrides.GST ?? PAYMATE_BLANK_FIELDS.GST,
         },
         PaymentMethod: {
           PaymentMode: "UPI",
@@ -493,6 +497,73 @@ export async function runPaymateDebug(debugKey?: string | null) {
           url: v.url,
           error: err instanceof Error ? err.message : String(err),
           duration_ms: Date.now() - t0,
+        });
+      }
+    }
+
+    report.blank_fields_audit = {
+      explanation:
+        "PayMate 'add a blank' = these fields must be present in JSON as empty string \"\", same as working live merchant.",
+      working_merchant_blank_fields: {
+        ContactXpressID: "",
+        InvoiceTerm: "",
+        GSTType: "",
+        GST: "",
+      },
+      ours_now: PAYMATE_BLANK_FIELDS,
+      reference_code_in_request: config.referenceCode,
+      reference_code_is_blank: config.referenceCode === "",
+      tip: "Set PAYMATE_REFERENCE_CODE= (empty) on Hostinger if PayMate wants ReferenceCode blank for Treviqo.",
+    };
+
+    const blankTests: Array<{
+      id: string;
+      hypothesis: string;
+      overrides: Record<string, string>;
+    }> = [
+      {
+        id: "reference_code_blank",
+        hypothesis: "ReferenceCode = empty string",
+        overrides: { ReferenceCode: "" },
+      },
+      {
+        id: "invoice_term_space",
+        hypothesis: "InvoiceTerm = single space character",
+        overrides: { InvoiceTerm: " " },
+      },
+      {
+        id: "all_invoice_blanks_space",
+        hypothesis: "InvoiceTerm + GSTType + GST = single space",
+        overrides: { InvoiceTerm: " ", GSTType: " ", GST: " " },
+      },
+      {
+        id: "contact_xpress_space",
+        hypothesis: "ContactXpressID = single space",
+        overrides: { ContactXpressID: " " },
+      },
+    ];
+    report.blank_field_tests = [];
+    for (const test of blankTests) {
+      const testOrderId = `UPIOITest${String(Date.now()).slice(-3)}`;
+      try {
+        const testPayload = buildSamplePayload(
+          testOrderId,
+          config.referenceCode,
+          test.overrides
+        );
+        const result = await postPaymateVariant(config, baseHeaders, testPayload);
+        (report.blank_field_tests as Record<string, unknown>[]).push({
+          id: test.id,
+          hypothesis: test.hypothesis,
+          overrides: test.overrides,
+          plain_json_preview: JSON.stringify(testPayload).slice(0, 200),
+          ...result,
+        });
+      } catch (err) {
+        (report.blank_field_tests as Record<string, unknown>[]).push({
+          id: test.id,
+          hypothesis: test.hypothesis,
+          error: err instanceof Error ? err.message : String(err),
         });
       }
     }
