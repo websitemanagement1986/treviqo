@@ -53,7 +53,7 @@ export function buildCollectPaymentsPayload(options: CollectPaymentsOptions) {
     referenceCode = "",
     companyName = "Rahul Kumar",
     mobile = "9898989898",
-    email = "test@treviqo.co.in",
+    email = "xyz@yahoo.com",
     invoiceAmount = 100,
     paymentMode = "UPI",
     paymentType = "Intent",

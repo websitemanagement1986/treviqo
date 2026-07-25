@@ -531,7 +531,7 @@ export async function runPaymateDebug(debugKey?: string | null) {
       },
       ours_now: {
         ReceipentMobileNo: "9898989898",
-        ReceipentEmailAddress: "test@treviqo.co.in",
+        ReceipentEmailAddress: "xyz@yahoo.com",
         UDF1_UDF2: "empty arrays",
         InvoiceNumber: `INV${orderId}`,
         InvoiceStartDate: getPaymateInvoiceDate(),
