@@ -7,7 +7,14 @@ import path from "path";
 import { promisify } from "util";
 import { encryptRequest } from "@/lib/paymate/crypto";
 import { getPaymateConfig } from "@/lib/paymate/config";
-import { formatPaymateAmount, getPaymateInvoiceDate, PAYMATE_BLANK_FIELDS } from "@/lib/paymate/payload";
+import {
+  buildCollectPaymentsPayload,
+  buildPaymateOrderId,
+  diffAgainstWorkingMerchant,
+  formatPaymateAmount,
+  getPaymateInvoiceDate,
+  PAYMATE_BLANK_FIELDS,
+} from "@/lib/paymate/payload";
 import {
   extractPaymateMessage,
   extractPaymentUrl,
@@ -188,47 +195,177 @@ function maskId(value: string) {
   return `${value.slice(0, 8)}...${value.slice(-4)}`;
 }
 
-function buildSamplePayload(
-  orderId: string,
-  referenceCode: string,
-  blankOverrides: Record<string, string> = {}
+function buildSamplePayload(orderId: string, referenceCode = "") {
+  return buildCollectPaymentsPayload({ orderId, referenceCode });
+}
+
+async function runCombinationTests(
+  config: ReturnType<typeof getPaymateConfig>,
+  baseHeaders: Record<string, string>
 ) {
-  return {
-    CollectionDetails: [
-      {
-        TransactionDetails: {
-          OrderID: orderId,
-          CompanyName: "Rahul Kumar",
-          ReferenceCode: blankOverrides.ReferenceCode ?? referenceCode,
-          ContactXpressID: blankOverrides.ContactXpressID ?? PAYMATE_BLANK_FIELDS.ContactXpressID,
-          ReceipentMobileNo: "9898989898",
-          RecipentEmailAddress: "test@treviqo.co.in",
-          UDF1: [],
-          UDF2: [],
-          UDF3: [],
-          Remarks: "Payments",
-        },
-        INVOICE: {
-          InvoiceNumber: `INV${orderId}`,
-          InvoiceStartDate: getPaymateInvoiceDate(),
-          InvoiceTerm: blankOverrides.InvoiceTerm ?? PAYMATE_BLANK_FIELDS.InvoiceTerm,
-          InvoiceAmount: formatPaymateAmount(100),
-          GSTType: blankOverrides.GSTType ?? PAYMATE_BLANK_FIELDS.GSTType,
-          GST: blankOverrides.GST ?? PAYMATE_BLANK_FIELDS.GST,
-        },
-        PaymentMethod: {
-          PaymentMode: "UPI",
-          PaymentType: "Intent",
-          TargetApp: "GPAY",
-          DeviceOS: "ANDROID",
-        },
-        SplitMDR: {
-          BuyerCharges: "0",
-          SupplierCharges: "100",
-        },
-      },
-    ],
+  type Spec = {
+    id: string;
+    hypothesis: string;
+    options: Parameters<typeof buildCollectPaymentsPayload>[0];
   };
+
+  const specs: Spec[] = [
+    {
+      id: "baseline_blank_ref_android",
+      hypothesis: "Blank ReferenceCode + UPI Intent + ANDROID + 100.00",
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "",
+        invoiceAmount: 100,
+        deviceOS: "ANDROID",
+      },
+    },
+    {
+      id: "working_clone_4_00",
+      hypothesis: "Clone working merchant: blank ref, 4.00, long OrderID, Rakesh Kumar",
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "",
+        companyName: "Rakesh Kumar",
+        email: "user9898989898@gmail.com",
+        invoiceAmount: 4,
+        deviceOS: "ANDROID",
+      },
+    },
+    {
+      id: "working_clone_short_order",
+      hypothesis: "Clone working merchant with short OrderID UPIOITest###",
+      options: {
+        orderId: buildPaymateOrderId("short"),
+        referenceCode: "",
+        companyName: "Rakesh Kumar",
+        email: "user9898989898@gmail.com",
+        invoiceAmount: 4,
+        deviceOS: "ANDROID",
+      },
+    },
+    {
+      id: "ref_treviqo01",
+      hypothesis: "ReferenceCode TREVIQO01 (env default)",
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "TREVIQO01",
+        invoiceAmount: 100,
+      },
+    },
+    {
+      id: "device_ios",
+      hypothesis: "DeviceOS IOS instead of ANDROID",
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "",
+        invoiceAmount: 100,
+        deviceOS: "IOS",
+      },
+    },
+    {
+      id: "invoice_term_space",
+      hypothesis: "InvoiceTerm = single space (PayMate blank hint)",
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "",
+        blankOverrides: { InvoiceTerm: " " },
+      },
+    },
+    {
+      id: "debit_card",
+      hypothesis: "DebitCard — if OK, terminal works but UPI not enabled",
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "",
+        paymentMode: "DebitCard",
+        paymentType: "Card",
+        invoiceAmount: 100,
+      },
+    },
+    {
+      id: "netbanking",
+      hypothesis: "NetBanking — if OK, terminal works but UPI not enabled",
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "",
+        paymentMode: "NetBanking",
+        paymentType: "Banking",
+        invoiceAmount: 100,
+      },
+    },
+  ];
+
+  const results: Record<string, unknown>[] = [];
+  for (const spec of specs) {
+    try {
+      const payload = buildCollectPaymentsPayload(spec.options);
+      const result = await postPaymateVariant(config, baseHeaders, payload);
+      results.push({
+        id: spec.id,
+        hypothesis: spec.hypothesis,
+        reference_code: payload.CollectionDetails[0].TransactionDetails.ReferenceCode,
+        payment_mode: payload.CollectionDetails[0].PaymentMethod.PaymentMode,
+        payment_type: payload.CollectionDetails[0].PaymentMethod.PaymentType,
+        invoice_amount: payload.CollectionDetails[0].INVOICE.InvoiceAmount,
+        ...result,
+      });
+    } catch (err) {
+      results.push({
+        id: spec.id,
+        hypothesis: spec.hypothesis,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+  return results;
+}
+
+function analyzeRootCauses(
+  combinationResults: Record<string, unknown>[],
+  primaryStatus: string | null | undefined
+) {
+  const causes: string[] = [];
+  const all178 = combinationResults.every((r) => r.status_code === "178" || r.error);
+  const upiResults = combinationResults.filter((r) => r.payment_mode === "UPI");
+  const nonUpiResults = combinationResults.filter((r) => r.payment_mode !== "UPI");
+  const nonUpiSuccess = nonUpiResults.some((r) => r.success);
+  const upiAnySuccess = upiResults.some((r) => r.success);
+
+  if (primaryStatus === "105") {
+    causes.push("CONFIRMED: IP whitelist or invalid source (105) — not a JSON format issue.");
+  } else if (all178) {
+    causes.push(
+      "LIKELY: Terminal YJFW000003 / Merchant 5F59A14F... does not accept these payment modes (all return 178)."
+    );
+    causes.push("PayMate must enable UPI Intent on Terminal 14926628...7099.");
+  }
+
+  if (nonUpiSuccess && !upiAnySuccess) {
+    causes.push(
+      "CONFIRMED: Terminal accepts other payment modes but NOT UPI — UPI Intent must be enabled by PayMate."
+    );
+  } else if (!nonUpiSuccess && all178) {
+    causes.push(
+      "LIKELY: Terminal configuration issue — even DebitCard/NetBanking return 178 (wrong terminal or merchant setup)."
+    );
+  }
+
+  const blankRef = combinationResults.find((r) => r.id === "baseline_blank_ref_android");
+  const treviqoRef = combinationResults.find((r) => r.id === "ref_treviqo01");
+  if (blankRef?.status_code === treviqoRef?.status_code) {
+    causes.push("REJECTED: ReferenceCode blank vs TREVIQO01 — same status code.");
+  } else if (blankRef?.success || treviqoRef?.success) {
+    causes.push("CONFIRMED: ReferenceCode value matters — one variant succeeded.");
+  }
+
+  causes.push(
+    "REJECTED: JSON extra spaces — has_extra_spaces is false.",
+    "REJECTED: Blank ContactXpressID/InvoiceTerm/GST fields — match working merchant empty strings.",
+    "Compare working_merchant_diff in response for any remaining field mismatches."
+  );
+
+  return causes;
 }
 
 async function postPaymateVariant(
@@ -370,8 +507,8 @@ export async function runPaymateDebug(debugKey?: string | null) {
       consistent: allIps.length === 1,
     };
 
-    const orderId = `UPIOITest${String(Date.now()).slice(-3)}`;
-    const payload = buildSamplePayload(orderId, config.referenceCode);
+    const orderId = buildPaymateOrderId("long");
+    const payload = buildSamplePayload(orderId, "");
     const plainJsonString = JSON.stringify(payload);
     const encryptedBody = encryptRequest(payload, config.paymatePublicCert, config.iv);
     const jsonBody = JSON.stringify(encryptedBody);
@@ -379,16 +516,18 @@ export async function runPaymateDebug(debugKey?: string | null) {
     report.plain_json_string = plainJsonString;
     report.plain_json_length = plainJsonString.length;
     report.has_extra_spaces = /  /.test(plainJsonString) || /\t/.test(plainJsonString);
+    report.working_merchant_diff = diffAgainstWorkingMerchant(payload);
     report.sample_comparison = {
       working_merchant_reference: {
         ReceipentMobileNo: "9898989898",
         RecipentEmailAddress: "filled",
+        ReferenceCode: "RF191925 (other merchant)",
         UDF1_UDF2: "empty arrays",
         InvoiceNumber: "INV + OrderID",
         InvoiceStartDate: "YYYY-MM-DD",
         InvoiceAmount: "4.00 (two decimals)",
         DeviceOS: "ANDROID",
-        CompanyName: "Rakesh Kumar (name with space)",
+        CompanyName: "Rakesh Kumar",
       },
       ours_now: {
         ReceipentMobileNo: "9898989898",
@@ -399,7 +538,6 @@ export async function runPaymateDebug(debugKey?: string | null) {
         InvoiceAmount: formatPaymateAmount(100),
         DeviceOS: "ANDROID",
         CompanyName: "Rahul Kumar",
-        ReferenceCode: config.referenceCode,
       },
     };
     report.env_whitespace_audit = {
@@ -503,72 +641,35 @@ export async function runPaymateDebug(debugKey?: string | null) {
 
     report.blank_fields_audit = {
       explanation:
-        "PayMate 'add a blank' = these fields must be present in JSON as empty string \"\", same as working live merchant.",
-      working_merchant_blank_fields: {
-        ContactXpressID: "",
-        InvoiceTerm: "",
-        GSTType: "",
-        GST: "",
-      },
+        "Blank fields = empty string \"\" in JSON (ContactXpressID, InvoiceTerm, GSTType, GST). ReferenceCode blank for Treviqo.",
+      working_merchant_blank_fields: PAYMATE_BLANK_FIELDS,
       ours_now: PAYMATE_BLANK_FIELDS,
-      reference_code_in_request: config.referenceCode,
-      reference_code_is_blank: config.referenceCode === "",
-      tip: "Set PAYMATE_REFERENCE_CODE= (empty) on Hostinger if PayMate wants ReferenceCode blank for Treviqo.",
+      reference_code_in_request: "",
+      reference_code_is_blank: true,
     };
 
-    const blankTests: Array<{
-      id: string;
-      hypothesis: string;
-      overrides: Record<string, string>;
-    }> = [
-      {
-        id: "reference_code_blank",
-        hypothesis: "ReferenceCode = empty string",
-        overrides: { ReferenceCode: "" },
-      },
-      {
-        id: "invoice_term_space",
-        hypothesis: "InvoiceTerm = single space character",
-        overrides: { InvoiceTerm: " " },
-      },
-      {
-        id: "all_invoice_blanks_space",
-        hypothesis: "InvoiceTerm + GSTType + GST = single space",
-        overrides: { InvoiceTerm: " ", GSTType: " ", GST: " " },
-      },
-      {
-        id: "contact_xpress_space",
-        hypothesis: "ContactXpressID = single space",
-        overrides: { ContactXpressID: " " },
-      },
-    ];
-    report.blank_field_tests = [];
-    for (const test of blankTests) {
-      const testOrderId = `UPIOITest${String(Date.now()).slice(-3)}`;
-      try {
-        const testPayload = buildSamplePayload(
-          testOrderId,
-          config.referenceCode,
-          test.overrides
-        );
-        const result = await postPaymateVariant(config, baseHeaders, testPayload);
-        (report.blank_field_tests as Record<string, unknown>[]).push({
-          id: test.id,
-          hypothesis: test.hypothesis,
-          overrides: test.overrides,
-          plain_json_preview: JSON.stringify(testPayload).slice(0, 200),
-          ...result,
-        });
-      } catch (err) {
-        (report.blank_field_tests as Record<string, unknown>[]).push({
-          id: test.id,
-          hypothesis: test.hypothesis,
-          error: err instanceof Error ? err.message : String(err),
-        });
-      }
+    report.combination_tests = await runCombinationTests(config, baseHeaders);
+    report.root_cause_analysis = analyzeRootCauses(
+      report.combination_tests as Record<string, unknown>[],
+      (report.combination_tests as Record<string, unknown>[]).find((r) => r.id === "baseline_blank_ref_android")?.status_code as string
+    );
+
+    const comboWinner = (report.combination_tests as Record<string, unknown>[]).find((r) => r.success);
+    if (comboWinner) {
+      report.combination_winner = {
+        id: comboWinner.id,
+        payment_mode: comboWinner.payment_mode,
+        payment_url: comboWinner.payment_url,
+      };
     }
 
-    report.upi_payment_variations = [];
+    report.blank_field_tests = (report.combination_tests as Record<string, unknown>[]).filter((r) =>
+      ["invoice_term_space", "ref_treviqo01"].includes(String(r.id))
+    );
+
+    report.upi_payment_variations = (report.combination_tests as Record<string, unknown>[]).filter(
+      (r) => r.payment_mode === "UPI"
+    );
     const upiSuccess = (report.upi_payment_variations as Record<string, unknown>[]).find((v) => v.success);
     if (upiSuccess) {
       report.interpretation_upi_winner = {
@@ -709,14 +810,14 @@ export async function runPaymateDebug(debugKey?: string | null) {
           interpretation.push(`Payment URL received: ${primaryResult.payment_url}`);
         }
       } else if (primaryResult.status_code === "178") {
-        const winner = report.interpretation_upi_winner as Record<string, unknown> | undefined;
+        const winner = report.combination_winner as Record<string, unknown> | undefined;
         if (winner) {
           interpretation.push(
-            `UPI variant ${winner.id} succeeded with PaymentMode=${winner.payment_mode}, PaymentType=${winner.payment_type}.`
+            `Combination test ${winner.id} succeeded with PaymentMode=${winner.payment_mode}.`
           );
         } else {
           interpretation.push(
-            `PayMate still returns 178 Invalid Payment Mode for UPI. Confirm Hosted Checkout UPI is enabled for merchant ${config.businessXpressId} / Terminal ${maskId(config.terminalId)}.`
+            `PayMate still returns 178 Invalid Payment Mode for UPI. Confirm UPI Intent is enabled for merchant ${config.businessXpressId} / Terminal ${maskId(config.terminalId)}.`
           );
         }
         const parsed = primaryResult.parsed_response as Record<string, unknown> | undefined;
@@ -724,12 +825,13 @@ export async function runPaymateDebug(debugKey?: string | null) {
         interpretation.push(
           `Detail: ${detailed?.[0]?.StatusMessage || primaryResult.description}`
         );
-        const variantSummary = (report.upi_payment_variations as Record<string, unknown>[])
+        const comboSummary = (report.combination_tests as Record<string, unknown>[])
           .map((v) => `${v.id}=${v.status_code || "err"}`)
           .join(", ");
-        if (variantSummary) {
-          interpretation.push(`UPI type tests: ${variantSummary}`);
+        if (comboSummary) {
+          interpretation.push(`Combination tests: ${comboSummary}`);
         }
+        interpretation.push(...(report.root_cause_analysis as string[]));
       } else {
         interpretation.push(
           `PayMate returned StatusCode ${primaryResult.status_code}: ${primaryResult.description || "see parsed_response"}`

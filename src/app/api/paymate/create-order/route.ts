@@ -10,7 +10,12 @@ import {
 import { getPaymateConfig } from "@/lib/paymate/config";
 import { resolvePaymateMethod } from "@/lib/paymate/payment-methods";
 import { savePendingOrder } from "@/lib/paymate/orders";
-import { formatPaymateAmount, getPaymateInvoiceDate, PAYMATE_BLANK_FIELDS } from "@/lib/paymate/payload";
+import {
+  buildCollectPaymentsPayload,
+  formatPaymateAmount,
+  getPaymateInvoiceDate,
+  PAYMATE_BLANK_FIELDS,
+} from "@/lib/paymate/payload";
 
 function buildOrderId() {
   return `TRV${Date.now()}`.slice(0, 20);
