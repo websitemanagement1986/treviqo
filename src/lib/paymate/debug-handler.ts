@@ -206,13 +206,89 @@ async function runCombinationTests(
   type Spec = {
     id: string;
     hypothesis: string;
+    doc_ref?: string;
     options: Parameters<typeof buildCollectPaymentsPayload>[0];
+    endpoint?: string;
   };
+
+  const v1Endpoint = paymateV1CollectEndpoint(config.endpoint);
 
   const specs: Spec[] = [
     {
       id: "baseline_blank_ref_android",
-      hypothesis: "Blank ReferenceCode + UPI Intent + ANDROID + 100.00",
+      hypothesis: "Blank ReferenceCode + UPI Intent + ANDROID + 100.00 (v2)",
+      doc_ref: "UPI Intent doc — Intent on v2 (current Treviqo)",
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "",
+        invoiceAmount: 100,
+        deviceOS: "ANDROID",
+      },
+    },
+    {
+      id: "checkout_upi_vpa_v2",
+      hypothesis: "Checkout doc: v2 + UPI + VPA, no DeviceOS/TargetApp",
+      doc_ref: "PayMate_Checkout_Integration.html",
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "",
+        paymentType: "VPA",
+        includeIntentFields: false,
+        invoiceAmount: 100,
+      },
+    },
+    {
+      id: "checkout_upi_qrcode_v2",
+      hypothesis: "Checkout doc: v2 + UPI + QRCode",
+      doc_ref: "PayMate_Checkout_Integration.html",
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "",
+        paymentType: "QRCode",
+        includeIntentFields: false,
+        invoiceAmount: 100,
+      },
+    },
+    {
+      id: "checkout_upi_vpa_slash_qrcode_v2",
+      hypothesis: "Checkout/Fomino: v2 + UPI + VPA/QRCode",
+      doc_ref: "PayMate_Checkout_Integration.html + Fomino",
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "",
+        paymentType: "VPA/QRCode",
+        includeIntentFields: false,
+        invoiceAmount: 100,
+      },
+    },
+    {
+      id: "checkout_credit_card_v2",
+      hypothesis: "Checkout doc: v2 + CreditCard + Card",
+      doc_ref: "PayMate_Checkout_Integration.html",
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "",
+        paymentMode: "CreditCard",
+        paymentType: "Card",
+        invoiceAmount: 100,
+      },
+    },
+    {
+      id: "intent_v1_android",
+      hypothesis: "UPI Intent doc: v1 + Intent + ANDROID + GPAY",
+      doc_ref: "PayMate_UPI_Intent_Integration.html",
+      endpoint: v1Endpoint,
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "",
+        invoiceAmount: 100,
+        deviceOS: "ANDROID",
+      },
+    },
+    {
+      id: "intent_v2_android",
+      hypothesis: "UPI Intent doc fields on v2 endpoint",
+      doc_ref: "Hybrid — Intent fields + v2 CollectPayments",
       options: {
         orderId: buildPaymateOrderId("long"),
         referenceCode: "",
@@ -300,10 +376,16 @@ async function runCombinationTests(
   for (const spec of specs) {
     try {
       const payload = buildCollectPaymentsPayload(spec.options);
-      const result = await postPaymateVariant(config, baseHeaders, payload);
+      const result = await postPaymateVariant(
+        config,
+        baseHeaders,
+        payload,
+        spec.endpoint
+      );
       results.push({
         id: spec.id,
         hypothesis: spec.hypothesis,
+        doc_ref: spec.doc_ref,
         reference_code: payload.CollectionDetails[0].TransactionDetails.ReferenceCode,
         payment_mode: payload.CollectionDetails[0].PaymentMethod.PaymentMode,
         payment_type: payload.CollectionDetails[0].PaymentMethod.PaymentType,
@@ -359,6 +441,37 @@ function analyzeRootCauses(
     causes.push("CONFIRMED: ReferenceCode value matters — one variant succeeded.");
   }
 
+  const v1Winner = combinationResults.find(
+    (r) => r.success && String(r.endpoint || "").includes("/api/v1/")
+  );
+  const v2Winner = combinationResults.find(
+    (r) => r.success && String(r.endpoint || "").includes("/api/v2/")
+  );
+  const checkoutWinner = combinationResults.find(
+    (r) =>
+      r.success &&
+      ["VPA", "QRCode", "VPA/QRCode"].includes(String(r.payment_type))
+  );
+  const intentWinner = combinationResults.find(
+    (r) => r.success && String(r.payment_type) === "Intent"
+  );
+
+  if (v1Winner && !v2Winner) {
+    causes.push("CONFIRMED: v1 endpoint works but v2 fails — use api/v1/CollectPayments for Intent.");
+  } else if (v2Winner && !v1Winner) {
+    causes.push("CONFIRMED: v2 endpoint works — keep api/v2/CollectPayments.");
+  } else if (v1Winner && v2Winner) {
+    causes.push("Both v1 and v2 return success — compare payment_url_scheme (upi vs https).");
+  }
+
+  if (checkoutWinner && !intentWinner) {
+    causes.push(
+      "CONFIRMED: Checkout doc flow wins (VPA/QRCode on v2) — switch production to hosted checkout PaymentType."
+    );
+  } else if (intentWinner && !checkoutWinner) {
+    causes.push("CONFIRMED: UPI Intent flow wins — keep PaymentType Intent + DeviceOS/TargetApp.");
+  }
+
   causes.push(
     "REJECTED: JSON extra spaces — has_extra_spaces is false.",
     "REJECTED: Blank ContactXpressID/InvoiceTerm/GST fields — match working merchant empty strings.",
@@ -368,15 +481,28 @@ function analyzeRootCauses(
   return causes;
 }
 
+function paymateV1CollectEndpoint(v2Endpoint: string): string {
+  return v2Endpoint.replace(/\/api\/v2\/CollectPayments$/i, "/api/v1/CollectPayments");
+}
+
+function paymentUrlScheme(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (url.startsWith("upi://")) return "upi";
+  if (url.startsWith("http://") || url.startsWith("https://")) return "https";
+  return "other";
+}
+
 async function postPaymateVariant(
   config: ReturnType<typeof getPaymateConfig>,
   baseHeaders: Record<string, string>,
-  variantPayload: object
+  variantPayload: object,
+  endpointUrl?: string
 ) {
+  const url = endpointUrl || config.endpoint;
   const encryptedBody = encryptRequest(variantPayload, config.paymatePublicCert, config.iv);
   const jsonBody = JSON.stringify(encryptedBody);
   const t0 = Date.now();
-  const r = await fetch(config.endpoint, {
+  const r = await fetch(url, {
     method: "POST",
     headers: baseHeaders,
     body: jsonBody,
@@ -391,6 +517,7 @@ async function postPaymateVariant(
   }
   const analyzed = analyzePaymateBody(body, config);
   return {
+    endpoint: url,
     duration_ms: Date.now() - t0,
     http_status: r.status,
     plain_text_payload: variantPayload,
@@ -398,6 +525,7 @@ async function postPaymateVariant(
     status_code: analyzed.status_code,
     description: analyzed.description,
     payment_url: analyzed.payment_url,
+    payment_url_scheme: paymentUrlScheme(analyzed.payment_url),
     success: analyzed.success,
   };
 }
@@ -423,6 +551,7 @@ export async function runPaymateDebug(debugKey?: string | null) {
     (report.checks as Record<string, unknown>).config = {
       ok: true,
       endpoint: config.endpoint,
+      endpoint_v1: paymateV1CollectEndpoint(config.endpoint),
       site_url: config.siteUrl,
       business_xpress_id: config.businessXpressId,
       merchant_id: maskId(config.merchantId),
@@ -659,9 +788,24 @@ export async function runPaymateDebug(debugKey?: string | null) {
       report.combination_winner = {
         id: comboWinner.id,
         payment_mode: comboWinner.payment_mode,
+        payment_type: comboWinner.payment_type,
+        endpoint: comboWinner.endpoint,
         payment_url: comboWinner.payment_url,
+        payment_url_scheme: comboWinner.payment_url_scheme,
       };
     }
+
+    const docVariantIds = [
+      "checkout_upi_vpa_v2",
+      "checkout_upi_qrcode_v2",
+      "checkout_upi_vpa_slash_qrcode_v2",
+      "checkout_credit_card_v2",
+      "intent_v1_android",
+      "intent_v2_android",
+    ];
+    report.doc_variant_tests = (report.combination_tests as Record<string, unknown>[]).filter(
+      (r) => docVariantIds.includes(String(r.id))
+    );
 
     report.blank_field_tests = (report.combination_tests as Record<string, unknown>[]).filter((r) =>
       ["invoice_term_space", "ref_treviqo01"].includes(String(r.id))

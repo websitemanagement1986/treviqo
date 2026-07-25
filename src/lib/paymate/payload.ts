@@ -27,6 +27,8 @@ export type CollectPaymentsOptions = {
   paymentType?: string;
   targetApp?: string;
   deviceOS?: string;
+  /** When false, omit TargetApp/DeviceOS even for UPI (checkout VPA/QRCode flow). */
+  includeIntentFields?: boolean;
   blankOverrides?: Record<string, string>;
   returnUrl?: string;
 };
@@ -59,6 +61,7 @@ export function buildCollectPaymentsPayload(options: CollectPaymentsOptions) {
     paymentType = "Intent",
     targetApp = "GPAY",
     deviceOS = "ANDROID",
+    includeIntentFields = paymentType === "Intent",
     blankOverrides = {},
     returnUrl,
   } = options;
@@ -83,7 +86,7 @@ export function buildCollectPaymentsPayload(options: CollectPaymentsOptions) {
     PaymentMode: paymentMode,
     PaymentType: paymentType,
   };
-  if (paymentMode === "UPI" && paymentType === "Intent") {
+  if (paymentMode === "UPI" && includeIntentFields) {
     paymentMethod.TargetApp = targetApp;
     paymentMethod.DeviceOS = deviceOS;
   }
