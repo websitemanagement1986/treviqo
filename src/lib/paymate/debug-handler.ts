@@ -6,7 +6,7 @@ import fs from "fs";
 import path from "path";
 import { promisify } from "util";
 import { encryptRequest } from "@/lib/paymate/crypto";
-import { getPaymateConfig } from "@/lib/paymate/config";
+import { getPaymateConfig, paymateV1CollectEndpoint } from "@/lib/paymate/config";
 import {
   buildCollectPaymentsPayload,
   buildPaymateOrderId,
@@ -274,8 +274,8 @@ async function runCombinationTests(
       },
     },
     {
-      id: "intent_v1_android",
-      hypothesis: "UPI Intent doc: v1 + Intent + ANDROID + GPAY",
+      id: "intent_v1_android_blank",
+      hypothesis: "UPI Intent doc: v1 + blank ReferenceCode",
       doc_ref: "PayMate_UPI_Intent_Integration.html",
       endpoint: v1Endpoint,
       options: {
@@ -283,6 +283,43 @@ async function runCombinationTests(
         referenceCode: "",
         invoiceAmount: 100,
         deviceOS: "ANDROID",
+      },
+    },
+    {
+      id: "intent_v1_treviqo01",
+      hypothesis: "UPI Intent doc: v1 + ReferenceCode TREVIQO01",
+      doc_ref: "PayMate_UPI_Intent_Integration.html + registered ref",
+      endpoint: v1Endpoint,
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "TREVIQO01",
+        invoiceAmount: 100,
+        deviceOS: "ANDROID",
+      },
+    },
+    {
+      id: "intent_v1_env_ref",
+      hypothesis: "UPI Intent: v1 + PAYMATE_REFERENCE_CODE from env",
+      doc_ref: "PayMate_UPI_Intent_Integration.html + env ref",
+      endpoint: v1Endpoint,
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: config.referenceCode,
+        invoiceAmount: 100,
+        deviceOS: "ANDROID",
+      },
+    },
+    {
+      id: "checkout_upi_vpa_v1_treviqo01",
+      hypothesis: "Checkout doc on v1: UPI + VPA + TREVIQO01",
+      doc_ref: "Hybrid — checkout PaymentType on v1",
+      endpoint: v1Endpoint,
+      options: {
+        orderId: buildPaymateOrderId("long"),
+        referenceCode: "TREVIQO01",
+        paymentType: "VPA",
+        includeIntentFields: false,
+        invoiceAmount: 100,
       },
     },
     {
@@ -435,10 +472,24 @@ function analyzeRootCauses(
 
   const blankRef = combinationResults.find((r) => r.id === "baseline_blank_ref_android");
   const treviqoRef = combinationResults.find((r) => r.id === "ref_treviqo01");
+  const v1Blank = combinationResults.find((r) => r.id === "intent_v1_android_blank");
+  const v1Treviqo = combinationResults.find((r) => r.id === "intent_v1_treviqo01");
   if (blankRef?.status_code === treviqoRef?.status_code) {
-    causes.push("REJECTED: ReferenceCode blank vs TREVIQO01 — same status code.");
+    causes.push("REJECTED: ReferenceCode blank vs TREVIQO01 on v2 — same status code.");
   } else if (blankRef?.success || treviqoRef?.success) {
-    causes.push("CONFIRMED: ReferenceCode value matters — one variant succeeded.");
+    causes.push("CONFIRMED: ReferenceCode value matters on v2 — one variant succeeded.");
+  }
+  if (v1Blank && v1Treviqo) {
+    if (v1Blank.status_code === "178" && String(v1Blank.description || "").includes("ReferenceCode")) {
+      causes.push("CONFIRMED: v1 rejects blank ReferenceCode — use registered ref (e.g. TREVIQO01).");
+    }
+    if (v1Treviqo?.success) {
+      causes.push("CONFIRMED: v1 + TREVIQO01 works — set PAYMATE_API_VERSION=v1 and PAYMATE_REFERENCE_CODE=TREVIQO01.");
+    } else if (v1Treviqo?.status_code !== v1Blank?.status_code) {
+      causes.push(
+        `v1 ref TREVIQO01 changed response: ${v1Blank?.status_code}/${v1Blank?.description} → ${v1Treviqo?.status_code}/${v1Treviqo?.description}`
+      );
+    }
   }
 
   const v1Winner = combinationResults.find(
@@ -481,8 +532,55 @@ function analyzeRootCauses(
   return causes;
 }
 
-function paymateV1CollectEndpoint(v2Endpoint: string): string {
-  return v2Endpoint.replace(/\/api\/v2\/CollectPayments$/i, "/api/v1/CollectPayments");
+async function runPaymateCallReport(
+  config: ReturnType<typeof getPaymateConfig>,
+  baseHeaders: Record<string, string>,
+  orderId: string,
+  referenceCode: string,
+  endpointUrl: string,
+  label: string
+) {
+  const payload = buildSamplePayload(orderId, referenceCode);
+  const encryptedBody = encryptRequest(payload, config.paymatePublicCert, config.iv);
+  const jsonBody = JSON.stringify(encryptedBody);
+  const t0 = Date.now();
+  const r = await fetch(endpointUrl, {
+    method: "POST",
+    headers: baseHeaders,
+    body: jsonBody,
+    signal: AbortSignal.timeout(10000),
+  });
+  const txt = await r.text();
+  let body: Record<string, unknown>;
+  try {
+    body = JSON.parse(txt) as Record<string, unknown>;
+  } catch {
+    body = { raw_preview: txt.slice(0, 300) };
+  }
+  const analyzed = analyzePaymateBody(body, config);
+  return {
+    label,
+    duration_ms: Date.now() - t0,
+    request: {
+      method: "POST",
+      url: endpointUrl,
+      headers: baseHeaders,
+      body: encryptedBody,
+      plain_text_payload: payload,
+      reference_code: referenceCode,
+    },
+    response: {
+      http_status: r.status,
+      body,
+      parsed: analyzed.parsed,
+    },
+    sample_order_id: orderId,
+    status_code: analyzed.status_code,
+    description: analyzed.description || null,
+    payment_url: analyzed.payment_url || null,
+    payment_url_scheme: paymentUrlScheme(analyzed.payment_url),
+    success: Boolean(analyzed.success),
+  };
 }
 
 function paymentUrlScheme(url: string | null | undefined): string | null {
@@ -551,7 +649,10 @@ export async function runPaymateDebug(debugKey?: string | null) {
     (report.checks as Record<string, unknown>).config = {
       ok: true,
       endpoint: config.endpoint,
-      endpoint_v1: paymateV1CollectEndpoint(config.endpoint),
+      endpoint_v1: config.endpointV1,
+      endpoint_v2: config.endpointV2,
+      api_version: config.apiVersion,
+      paymate_api_version_env: process.env.PAYMATE_API_VERSION || null,
       site_url: config.siteUrl,
       business_xpress_id: config.businessXpressId,
       merchant_id: maskId(config.merchantId),
@@ -800,7 +901,10 @@ export async function runPaymateDebug(debugKey?: string | null) {
       "checkout_upi_qrcode_v2",
       "checkout_upi_vpa_slash_qrcode_v2",
       "checkout_credit_card_v2",
-      "intent_v1_android",
+      "intent_v1_android_blank",
+      "intent_v1_treviqo01",
+      "intent_v1_env_ref",
+      "checkout_upi_vpa_v1_treviqo01",
       "intent_v2_android",
     ];
     report.doc_variant_tests = (report.combination_tests as Record<string, unknown>[]).filter(
@@ -941,6 +1045,25 @@ export async function runPaymateDebug(debugKey?: string | null) {
       description: primaryResult.description || null,
       payment_url: primaryResult.payment_url || null,
       success: Boolean(primaryResult.success),
+    };
+
+    const v1OrderId = buildPaymateOrderId("long");
+    const paymateCallV1Ref = await runPaymateCallReport(
+      config,
+      baseHeaders,
+      v1OrderId,
+      config.referenceCode || "TREVIQO01",
+      config.endpointV1,
+      "v1 + ReferenceCode (UPI Intent doc flow)"
+    );
+    report.paymate_call_v1_ref = paymateCallV1Ref;
+    report.recommended_try = {
+      endpoint: config.endpointV1,
+      reference_code: config.referenceCode || "TREVIQO01",
+      env: "PAYMATE_API_VERSION=v1 and PAYMATE_REFERENCE_CODE=TREVIQO01",
+      status_code: paymateCallV1Ref.status_code,
+      description: paymateCallV1Ref.description,
+      success: paymateCallV1Ref.success,
     };
 
     const interpretation: string[] = [];

@@ -2,12 +2,32 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 
+export function paymateV1CollectEndpoint(endpoint: string): string {
+  return endpoint.replace(/\/api\/v\d+\/CollectPayments$/i, "/api/v1/CollectPayments");
+}
+
+export function paymateV2CollectEndpoint(endpoint: string): string {
+  return endpoint.replace(/\/api\/v\d+\/CollectPayments$/i, "/api/v2/CollectPayments");
+}
+
+/** Resolve CollectPayments URL from PAYMATE_ENDPOINT + PAYMATE_API_VERSION (v1 | v2). */
+export function resolveCollectEndpoint(rawEndpoint: string): string {
+  const base = rawEndpoint.trim();
+  const version = (process.env.PAYMATE_API_VERSION || "").trim().toLowerCase();
+  if (version === "v1") return paymateV1CollectEndpoint(base);
+  if (version === "v2") return paymateV2CollectEndpoint(base);
+  return base;
+}
+
 export interface PaymateConfig {
   merchantId: string;
   terminalId: string;
   businessXpressId: string;
   iv: string;
   endpoint: string;
+  endpointV1: string;
+  endpointV2: string;
+  apiVersion: string;
   siteUrl: string;
   paymatePublicCert: string;
   partnerPrivateKey: string;
@@ -196,9 +216,13 @@ export function getPaymateConfig(): PaymateConfig {
   const terminalId = (process.env.PAYMATE_TERMINAL_ID || "").trim();
   const businessXpressId = (process.env.PAYMATE_BUSINESS_XPRESS_ID || "").trim();
   const iv = (process.env.PAYMATE_IV || "54327CD65487ECAB").trim();
-  const endpoint =
+  const rawEndpoint =
     process.env.PAYMATE_ENDPOINT ||
     "https://paymate.in/PaymatePartnerStack/api/v2/CollectPayments";
+  const endpoint = resolveCollectEndpoint(rawEndpoint);
+  const endpointV1 = paymateV1CollectEndpoint(rawEndpoint);
+  const endpointV2 = paymateV2CollectEndpoint(rawEndpoint);
+  const apiVersion = endpoint.includes("/api/v1/") ? "v1" : "v2";
   const siteUrl = (process.env.SITE_URL || "https://treviqo.co.in").replace(/\/$/, "");
 
   if (!merchantId || !terminalId || !businessXpressId) {
@@ -221,6 +245,9 @@ export function getPaymateConfig(): PaymateConfig {
     businessXpressId,
     iv,
     endpoint,
+    endpointV1,
+    endpointV2,
+    apiVersion,
     siteUrl,
     paymatePublicCert,
     partnerPrivateKey: partner.pem,
