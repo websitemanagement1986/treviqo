@@ -7,7 +7,15 @@ import { CartSummary } from "@/components/cart/CartSummary";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 
 export default function CartPage() {
-  const { items } = useCart();
+  const { items, hydrated } = useCart();
+
+  if (!hydrated) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        <p className="text-[var(--color-text-muted)]">Loading your bag...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">

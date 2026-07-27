@@ -235,9 +235,10 @@ export function getPaymateConfig(): PaymateConfig {
 
   const partner = loadPartnerPrivateKey(appRoot);
 
+  // Blank ReferenceCode fails on v2; Treviqo registered value is TREVIQO01.
   const referenceCodeEnv = process.env.PAYMATE_REFERENCE_CODE;
   const referenceCode =
-    referenceCodeEnv === undefined ? "TREVIQO01" : referenceCodeEnv.trim();
+    !referenceCodeEnv || !referenceCodeEnv.trim() ? "TREVIQO01" : referenceCodeEnv.trim();
 
   return {
     merchantId,

@@ -18,6 +18,7 @@ export const PAYMATE_BLANK_FIELDS = {
 
 export type CollectPaymentsOptions = {
   orderId: string;
+  /** Registered merchant reference — Treviqo must use TREVIQO01 (blank fails on v2). */
   referenceCode?: string;
   companyName?: string;
   mobile?: string;
@@ -33,50 +34,7 @@ export type CollectPaymentsOptions = {
   returnUrl?: string;
 };
 
-/** PayMate support sample — v2 UPI Intent (Antara), field-for-field as provided. */
-export function buildPaymateAntaraV2SamplePayload(orderId = "Ordupi20260304777259") {
-  return {
-    CollectionDetails: [
-      {
-        TransactionDetails: {
-          OrderID: orderId,
-          CompanyName: "Antara",
-          ReferenceCode: "",
-          ReceipentMobileNo: "",
-          RecipentEmailAddress: "",
-          ContactXpressID: "",
-          UDF1: [],
-          UDF2: [],
-          UDF3: [],
-          Remarks: "Test for collection",
-        },
-        INVOICE: {
-          InvoiceNumber: "",
-          InvoiceStartDate: "",
-          InvoiceTerm: "",
-          InvoiceAmount: "201",
-          GSTType: "",
-          GST: "",
-        },
-        PaymentMethod: {
-          PaymentMode: "UPI",
-          PaymentType: "Intent",
-          DeviceOS: "ANDROID",
-          TargetApp: "GPAY",
-        },
-        SplitMDR: {
-          BuyerCharges: "0",
-          SupplierCharges: "100",
-        },
-      },
-    ],
-  };
-}
-
-export function buildPaymateOrderId(style: "long" | "short" = "long"): string {
-  if (style === "short") {
-    return `UPIOITest${String(Date.now()).slice(-3)}`;
-  }
+export function buildPaymateOrderId(): string {
   const now = new Date();
   const pad = (n: number, len = 2) => String(n).padStart(len, "0");
   const dd = pad(now.getDate());
@@ -92,7 +50,7 @@ export function buildPaymateOrderId(style: "long" | "short" = "long"): string {
 export function buildCollectPaymentsPayload(options: CollectPaymentsOptions) {
   const {
     orderId,
-    referenceCode = "",
+    referenceCode = "TREVIQO01",
     companyName = "Rahul Kumar",
     mobile = "9898989898",
     email = "xyz@yahoo.com",
@@ -151,71 +109,4 @@ export function buildCollectPaymentsPayload(options: CollectPaymentsOptions) {
       },
     ],
   };
-}
-
-/** Field-by-field diff vs a known working live merchant payload. */
-export function diffAgainstWorkingMerchant(payload: ReturnType<typeof buildCollectPaymentsPayload>) {
-  const item = payload.CollectionDetails[0];
-  const tx = item.TransactionDetails as {
-    OrderID: string;
-    CompanyName: string;
-    ReferenceCode: string;
-    ReceipentMobileNo: string;
-    RecipentEmailAddress: string;
-    ContactXpressID: string;
-    UDF1: unknown[];
-    UDF2: unknown[];
-  };
-  const inv = item.INVOICE;
-  const pm = item.PaymentMethod;
-
-  const working = {
-    OrderID: "1TXNP260725092611352467 (long numeric)",
-    CompanyName: "Rakesh Kumar",
-    ReferenceCode: "RF191925 (merchant-specific; Treviqo may use blank)",
-    ReceipentMobileNo: "9898989898",
-    RecipentEmailAddress: "filled email",
-    UDF1: "[]",
-    InvoiceNumber: "INV + OrderID",
-    InvoiceStartDate: "YYYY-MM-DD",
-    InvoiceAmount: "4.00",
-    PaymentMode: "UPI",
-    PaymentType: "Intent",
-    TargetApp: "GPAY",
-    DeviceOS: "ANDROID",
-    blank_fields: PAYMATE_BLANK_FIELDS,
-  };
-
-  const ours = {
-    OrderID: tx.OrderID,
-    CompanyName: tx.CompanyName,
-    ReferenceCode: tx.ReferenceCode,
-    ReceipentMobileNo: tx.ReceipentMobileNo,
-    RecipentEmailAddress: tx.RecipentEmailAddress,
-    UDF1: JSON.stringify(tx.UDF1),
-    InvoiceNumber: inv.InvoiceNumber,
-    InvoiceStartDate: inv.InvoiceStartDate,
-    InvoiceAmount: inv.InvoiceAmount,
-    PaymentMode: pm.PaymentMode,
-    PaymentType: pm.PaymentType,
-    TargetApp: pm.TargetApp,
-    DeviceOS: pm.DeviceOS,
-    blank_fields: {
-      ContactXpressID: tx.ContactXpressID,
-      InvoiceTerm: inv.InvoiceTerm,
-      GSTType: inv.GSTType,
-      GST: inv.GST,
-    },
-  };
-
-  const mismatches: string[] = [];
-  if (!tx.ReceipentMobileNo) mismatches.push("ReceipentMobileNo empty");
-  if (!tx.RecipentEmailAddress) mismatches.push("RecipentEmailAddress empty");
-  if (!inv.InvoiceNumber) mismatches.push("InvoiceNumber empty");
-  if (!inv.InvoiceStartDate) mismatches.push("InvoiceStartDate empty");
-  if (!/^\d+\.\d{2}$/.test(inv.InvoiceAmount)) mismatches.push("InvoiceAmount missing .00 decimals");
-  if (tx.UDF1.length > 0 || tx.UDF2.length > 0) mismatches.push("UDF1/UDF2 should be []");
-  if (pm.PaymentMode !== "UPI" || pm.PaymentType !== "Intent") mismatches.push("PaymentMode/Type not UPI Intent");
-
-  return { working_reference: working, ours, mismatches, structure_matches_working: mismatches.length === 0 };
 }

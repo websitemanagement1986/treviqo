@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -16,6 +17,8 @@ interface CartContextValue {
   items: CartItem[];
   itemCount: number;
   subtotal: number;
+  /** False until localStorage has been read — do not treat empty cart as real yet. */
+  hydrated: boolean;
   addItem: (item: Omit<CartItem, "quantity"> & { quantity?: number }) => void;
   removeItem: (productId: string, size: string, color: string) => void;
   updateQuantity: (
@@ -35,25 +38,71 @@ function loadCart(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as CartItem[]) : [];
   } catch {
     return [];
+  }
+}
+
+function saveCart(items: CartItem[]) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  } catch {
+    // Private mode / quota — ignore so the app does not crash
   }
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  // Skip the first persist after hydrate so we never overwrite LS with [] before load settles
+  const skipNextPersist = useRef(true);
 
   useEffect(() => {
-    setItems(loadCart());
+    const loaded = loadCart();
+    setItems(loaded);
     setHydrated(true);
+    // #region agent log
+    fetch("http://127.0.0.1:7755/ingest/7241c1e8-cdcd-423f-a0eb-d69c4f07b551", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "ac4dc3" },
+      body: JSON.stringify({
+        sessionId: "ac4dc3",
+        runId: "cart-hydrate",
+        hypothesisId: "A",
+        location: "CartContext.tsx:hydrate",
+        message: "Cart hydrated from localStorage",
+        data: { loadedCount: loaded.length, storageKey: STORAGE_KEY },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
   }, []);
 
   useEffect(() => {
-    if (hydrated) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    if (!hydrated) return;
+    if (skipNextPersist.current) {
+      skipNextPersist.current = false;
+      return;
     }
+    saveCart(items);
+    // #region agent log
+    fetch("http://127.0.0.1:7755/ingest/7241c1e8-cdcd-423f-a0eb-d69c4f07b551", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "ac4dc3" },
+      body: JSON.stringify({
+        sessionId: "ac4dc3",
+        runId: "cart-persist",
+        hypothesisId: "A",
+        location: "CartContext.tsx:persist",
+        message: "Cart persisted to localStorage",
+        data: { itemCount: items.length },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
   }, [items, hydrated]);
 
   const addItem = useCallback(
@@ -130,12 +179,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       items,
       itemCount,
       subtotal,
+      hydrated,
       addItem,
       removeItem,
       updateQuantity,
       clearCart,
     }),
-    [items, itemCount, subtotal, addItem, removeItem, updateQuantity, clearCart]
+    [items, itemCount, subtotal, hydrated, addItem, removeItem, updateQuantity, clearCart]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

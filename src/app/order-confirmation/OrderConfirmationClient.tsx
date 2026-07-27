@@ -31,11 +31,14 @@ export default function OrderConfirmationClient() {
 
   useEffect(() => {
     const raw = sessionStorage.getItem("lastOrder");
-    if (raw) {
+    if (!raw) return;
+    try {
       const data = JSON.parse(raw) as OrderData;
       if (!orderParam || data.orderNumber === orderParam) {
         setOrder(data);
       }
+    } catch {
+      // Corrupt lastOrder — ignore rather than crashing the page
     }
   }, [orderParam]);
 

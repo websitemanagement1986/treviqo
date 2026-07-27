@@ -40,11 +40,12 @@ PAYMATE_TERMINAL_ID=14926628-5AF7-480B-A027-2F676A467099
 PAYMATE_BUSINESS_XPRESS_ID=YJFW000003
 PAYMATE_IV=54327CD65487ECAB
 PAYMATE_ENDPOINT=https://paymate.in/PaymatePartnerStack/api/v2/CollectPayments
-PAYMATE_API_VERSION=v1
+PAYMATE_API_VERSION=v2
 PAYMATE_COMPANY_NAME=Treviqo Traders (OPC) Pvt Ltd
 PAYMATE_REFERENCE_CODE=TREVIQO01
 PAYMATE_PUBLIC_CERT_PATH=certs/paymate-public.cer
 PAYMATE_PARTNER_PRIVATE_KEY_B64=<run node scripts/print-paymate-private-key-env.js locally>
+PAYMATE_PARTNER_API_KEY=<long random secret shared with external partner>
 RESEND_API_KEY=<your Resend key>
 FROM_EMAIL=orders@treviqo.co.in
 ADMIN_EMAIL=support@treviqo.co.in
@@ -54,9 +55,18 @@ ADMIN_EMAIL=support@treviqo.co.in
 - Callback: `https://treviqo.co.in/api/paymate/callback`
 - Return: `https://treviqo.co.in/paymate-return`
 
+**External partner Intent API:**
+- `POST https://treviqo.co.in/api/paymate/intent`
+- Header: `X-API-Key: <PAYMATE_PARTNER_API_KEY>` (or `Authorization: Bearer ...`)
+- Body: `{ "amount": 100, "customerName": "name", "phone": "9876567898", "email": "", "orderId": "" }`
+- Success: `{ "status": "SUCCESS", "message": "Intent Request Generated Successfully", "amount": 100, "orderId": "TRV...", "intentLink": "upi://pay?..." }`
+
 **Debug endpoints (after deploy):**
 - `GET /api/paymate/debug-ip` — outbound IP for PayMate whitelist
-- `GET /api/paymate/debug` — full PayMate connectivity test with decrypted responses
+- `GET /api/paymate/debug` — single CollectPayments smoke test (v2 + TREVIQO01 + UPI Intent)
+- `GET /api/paymate/debug-status` — list recent pending orders
+- `GET /api/paymate/debug-status?orderId=TRV...` — local pending + PayMate status inquiry (full request/response)
+- Also works: `GET /api/paymate/debug?orderId=TRV...` (same as debug-status)
 
 ### 4. Redeploy
 - Click **Redeploy** or **Clear cache & redeploy**

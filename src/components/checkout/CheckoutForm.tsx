@@ -30,10 +30,12 @@ function validateForm(form: CheckoutFormData, hasItems: boolean): string[] {
 
 export function CheckoutForm() {
   const router = useRouter();
-  const { items, clearCart } = useCart();
+  const { items, clearCart, hydrated } = useCart();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
   const [errors, setErrors] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [upiIntentUrl, setUpiIntentUrl] = useState<string | null>(null);
+  const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
   const [form, setForm] = useState<CheckoutFormData>({
     email: "",
     phone: "",
@@ -146,7 +148,37 @@ export function CheckoutForm() {
       })
     );
 
-    window.location.href = result.payment_url;
+    const paymentUrl = String(result.payment_url);
+    // #region agent log
+    fetch("http://127.0.0.1:7755/ingest/7241c1e8-cdcd-423f-a0eb-d69c4f07b551", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "ac4dc3" },
+      body: JSON.stringify({
+        sessionId: "ac4dc3",
+        runId: "checkout-upi",
+        hypothesisId: "C",
+        location: "CheckoutForm.tsx:upi",
+        message: "PayMate payment URL received",
+        data: {
+          scheme: paymentUrl.split(":")[0],
+          orderId: result.order_id,
+          cartItemCount: items.length,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+
+    // Never use location.href for upi:// — on desktop it blanks/crashes the tab.
+    // Keep checkout mounted and let the user open the intent via a link.
+    if (paymentUrl.startsWith("upi:")) {
+      setPendingOrderId(result.order_id);
+      setUpiIntentUrl(paymentUrl);
+      setSubmitting(false);
+      return;
+    }
+
+    window.location.href = paymentUrl;
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -170,6 +202,47 @@ export function CheckoutForm() {
       setSubmitting(false);
     }
   };
+
+  if (!hydrated) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-lg text-[var(--color-text-muted)]">Loading your bag...</p>
+      </div>
+    );
+  }
+
+  if (upiIntentUrl && pendingOrderId) {
+    return (
+      <div className="mx-auto max-w-lg text-center py-12 space-y-4">
+        <h2 className="text-xl font-bold">Complete payment in your UPI app</h2>
+        <p className="text-sm text-[var(--color-text-muted)]">
+          If the UPI app did not open automatically, tap the button below. Your bag is saved —
+          do not close this tab until payment is done.
+        </p>
+        <a href={upiIntentUrl} className="btn-primary inline-block">
+          Open UPI App
+        </a>
+        <div>
+          <Link
+            href={`/paymate-return?orderId=${encodeURIComponent(pendingOrderId)}`}
+            className="btn-secondary inline-block mt-2"
+          >
+            I have paid — check status
+          </Link>
+        </div>
+        <button
+          type="button"
+          className="text-sm text-[var(--color-primary)] underline"
+          onClick={() => {
+            setUpiIntentUrl(null);
+            setPendingOrderId(null);
+          }}
+        >
+          Cancel and stay on checkout
+        </button>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (

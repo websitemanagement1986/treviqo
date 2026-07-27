@@ -10,12 +10,7 @@ import {
 import { getPaymateConfig } from "@/lib/paymate/config";
 import { resolvePaymateMethod } from "@/lib/paymate/payment-methods";
 import { savePendingOrder } from "@/lib/paymate/orders";
-import {
-  buildCollectPaymentsPayload,
-  formatPaymateAmount,
-  getPaymateInvoiceDate,
-  PAYMATE_BLANK_FIELDS,
-} from "@/lib/paymate/payload";
+import { buildCollectPaymentsPayload } from "@/lib/paymate/payload";
 
 function buildOrderId() {
   return `TRV${Date.now()}`.slice(0, 20);
@@ -36,47 +31,17 @@ export async function POST(req: NextRequest) {
     const orderId = buildOrderId();
     const returnUrl = `${config.siteUrl}/paymate-return?orderId=${encodeURIComponent(orderId)}`;
 
-    const paymentMethodObj: Record<string, string> = {
-      PaymentMode: paymateMethod.PaymentMode,
-      PaymentType: paymateMethod.PaymentType,
-    };
-    if (paymateMethod.PaymentType === "Intent") {
-      paymentMethodObj.TargetApp = "GPAY";
-      paymentMethodObj.DeviceOS = "ANDROID";
-    }
-
-    const payload = {
-      CollectionDetails: [
-        {
-          TransactionDetails: {
-            OrderID: orderId,
-            CompanyName: customer.name,
-            ReferenceCode: config.referenceCode,
-            ContactXpressID: PAYMATE_BLANK_FIELDS.ContactXpressID,
-            ReceipentMobileNo: String(customer.phone).replace(/\D/g, "").slice(-10),
-            RecipentEmailAddress: customer.email,
-            UDF1: [],
-            UDF2: [],
-            UDF3: [],
-            Remarks: "Payments",
-            ReturnURL: returnUrl,
-          },
-          INVOICE: {
-            InvoiceNumber: `INV${orderId}`,
-            InvoiceStartDate: getPaymateInvoiceDate(),
-            InvoiceTerm: PAYMATE_BLANK_FIELDS.InvoiceTerm,
-            InvoiceAmount: formatPaymateAmount(total),
-            GSTType: PAYMATE_BLANK_FIELDS.GSTType,
-            GST: PAYMATE_BLANK_FIELDS.GST,
-          },
-          PaymentMethod: paymentMethodObj,
-          SplitMDR: {
-            BuyerCharges: "0",
-            SupplierCharges: "100",
-          },
-        },
-      ],
-    };
+    const payload = buildCollectPaymentsPayload({
+      orderId,
+      referenceCode: config.referenceCode,
+      companyName: customer.name,
+      mobile: String(customer.phone).replace(/\D/g, "").slice(-10),
+      email: customer.email,
+      invoiceAmount: total,
+      paymentMode: paymateMethod.PaymentMode,
+      paymentType: paymateMethod.PaymentType,
+      returnUrl,
+    });
 
     savePendingOrder(orderId, {
       customer,

@@ -75,6 +75,15 @@ export function getPendingOrder(orderId: string): PendingOrder | null {
   return store[orderId] || null;
 }
 
+/** Newest-first pending orders for status debug. */
+export function listPendingOrders(limit = 20): Array<{ orderId: string } & PendingOrder> {
+  const store = readStore();
+  return Object.entries(store)
+    .map(([orderId, order]) => ({ orderId, ...order }))
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
+    .slice(0, limit);
+}
+
 export function markOrderPaid(
   orderId: string,
   paymentData: { transactionId: string; paymatePayload?: Record<string, unknown> }
