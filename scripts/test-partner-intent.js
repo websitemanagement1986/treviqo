@@ -1,5 +1,5 @@
 /**
- * E2E smoke test for partner Intent API.
+ * E2E smoke test for partner Intent + status APIs.
  *
  * Usage:
  *   node scripts/test-partner-intent.js
@@ -25,13 +25,32 @@ loadDotEnv();
 const baseUrl = (process.argv[2] || process.env.SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 const apiKey = process.argv[3] || process.env.PAYMATE_PARTNER_API_KEY || "";
 
+async function partnerFetch(url, options = {}) {
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-Key": apiKey,
+      ...(options.headers || {}),
+    },
+  });
+  const text = await res.text();
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    json = { raw: text };
+  }
+  return { res, json };
+}
+
 async function main() {
   if (!apiKey) {
     console.error("Missing API key. Set PAYMATE_PARTNER_API_KEY or pass as argv[3].");
     process.exit(1);
   }
 
-  const url = `${baseUrl}/api/paymate/intent`;
+  const intentUrl = `${baseUrl}/api/paymate/intent`;
   const body = {
     amount: 1,
     customerName: "E2E Test",
@@ -40,41 +59,49 @@ async function main() {
     orderId: "",
   };
 
-  console.log("POST", url);
+  console.log("POST", intentUrl);
   console.log("Body", body);
 
-  const res = await fetch(url, {
+  const intent = await partnerFetch(intentUrl, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-API-Key": apiKey,
-    },
     body: JSON.stringify(body),
   });
 
-  const text = await res.text();
-  let json;
-  try {
-    json = JSON.parse(text);
-  } catch {
-    json = { raw: text };
-  }
+  console.log("HTTP", intent.res.status);
+  console.log(JSON.stringify(intent.json, null, 2));
 
-  console.log("HTTP", res.status);
-  console.log(JSON.stringify(json, null, 2));
+  const intentOk =
+    intent.res.status === 200 &&
+    intent.json.status === "SUCCESS" &&
+    typeof intent.json.intentLink === "string" &&
+    intent.json.intentLink.startsWith("upi://");
 
-  const ok =
-    res.status === 200 &&
-    json.status === "SUCCESS" &&
-    typeof json.intentLink === "string" &&
-    json.intentLink.startsWith("upi://");
-
-  if (!ok) {
-    console.error("\nE2E FAILED");
+  if (!intentOk) {
+    console.error("\nIntent E2E FAILED");
     process.exit(1);
   }
 
-  console.log("\nE2E OK — intentLink received for orderId", json.orderId);
+  console.log("\nIntent E2E OK — orderId", intent.json.orderId);
+
+  const statusUrl = `${baseUrl}/api/paymate/${encodeURIComponent(intent.json.orderId)}`;
+  console.log("\nGET", statusUrl);
+
+  const status = await partnerFetch(statusUrl, { method: "GET" });
+  console.log("HTTP", status.res.status);
+  console.log(JSON.stringify(status.json, null, 2));
+
+  const statusOk =
+    status.res.status === 200 &&
+    status.json.orderId === intent.json.orderId &&
+    typeof status.json.status === "string" &&
+    status.json.amount != null;
+
+  if (!statusOk) {
+    console.error("\nStatus E2E FAILED");
+    process.exit(1);
+  }
+
+  console.log("\nStatus E2E OK —", status.json.status, "rrn:", status.json.rrn);
 }
 
 main().catch((err) => {

@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "crypto";
 
 /**
- * External partner auth for /api/paymate/intent.
+ * External partner auth for /api/paymate/intent and GET /api/paymate/{orderId}.
  * Accepts: Authorization: Bearer <key>  OR  X-API-Key: <key>
  */
 export function authorizePartnerRequest(req: Request): { ok: true } | { ok: false; status: number; error: string } {

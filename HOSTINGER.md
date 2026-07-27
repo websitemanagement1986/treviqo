@@ -61,6 +61,13 @@ ADMIN_EMAIL=support@treviqo.co.in
 - Body: `{ "amount": 100, "customerName": "name", "phone": "9876567898", "email": "", "orderId": "" }`
 - Success: `{ "status": "SUCCESS", "message": "Intent Request Generated Successfully", "amount": 100, "orderId": "TRV...", "intentLink": "upi://pay?..." }`
 
+**External partner status API:**
+- `GET https://treviqo.co.in/api/paymate/{orderId}`
+- Header: `X-API-Key: <PAYMATE_PARTNER_API_KEY>` (or `Authorization: Bearer ...`)
+- Success: `{ "status": "Success", "message": "Transaction detail found.", "orderId": "TRV...", "rrn": "436100059799", "amount": 100 }`
+- `status` is the PayMate transaction status string when available (else `PENDING` / `FAILED` / `SUCCESS` from local store)
+- `rrn` is UTR / TransactionRefNo / gateway transaction id
+
 **Debug endpoints (after deploy):**
 - `GET /api/paymate/debug-ip` — outbound IP for PayMate whitelist
 - `GET /api/paymate/debug` — single CollectPayments smoke test (v2 + TREVIQO01 + UPI Intent)
