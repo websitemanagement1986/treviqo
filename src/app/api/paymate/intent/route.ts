@@ -118,13 +118,22 @@ export async function POST(req: NextRequest) {
 
     const intentLink = extractPaymentUrl(decrypted);
     if (!intentLink) {
+      const summary = Array.isArray(decrypted?.DetailedSummary)
+        ? (decrypted.DetailedSummary[0] as Record<string, unknown> | undefined)
+        : (decrypted?.DetailedSummary as Record<string, unknown> | undefined);
+      const paymateDetail =
+        (summary?.StatusMessage as string) ||
+        extractPaymateMessage(decrypted) ||
+        "PayMate did not return a payment URL";
       return NextResponse.json(
         {
           status: "FAILED",
-          message: "PayMate did not return a payment URL",
+          message: paymateDetail,
           amount,
           orderId,
           intentLink: null,
+          paymateStatusCode: decrypted?.StatusCode ?? null,
+          transactionStatus: summary?.TransactionStatus ?? null,
         },
         { status: 502 }
       );
