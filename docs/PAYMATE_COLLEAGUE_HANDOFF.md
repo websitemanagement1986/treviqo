@@ -66,7 +66,8 @@ If it means **technical access to verify Treviqo**:
 - [ ] `SITE=treviqo`, `SITE_URL=https://treviqo.co.in`, PayMate env vars set on Hostinger
 - [ ] PayMate whitelisted **92.113.19.150**
 - [ ] Callback + return URLs registered in merchant portal
-- [ ] UPI / hosted checkout enabled for **TREVIQO01** on PayMate side
+- [ ] **UPI Intent** enabled for **TREVIQO01** (QRCode returns PayMate error `178` on this account)
+- [ ] If Intent returns `999` / empty `PaymentURL`, PayMate must complete UPI activation on merchant profile
 - [ ] Test: checkout → PayMate → pay → return → **success** on `treviqo.co.in`
 
 ---

@@ -2,9 +2,9 @@ export const PAYMATE_METHODS = {
   upi: {
     label: "UPI",
     PaymentMode: "UPI",
-    /** Website checkout: hosted PayMate page (QR / VPA). Intent needs mobile app + TargetApp. */
-    PaymentType: "QRCode",
-    includeIntentFields: false,
+    /** Treviqo merchant: UPI Intent (QRCode returns PayMate 178 on this account). */
+    PaymentType: "Intent",
+    includeIntentFields: true,
   },
   debit: {
     label: "Debit Card",
