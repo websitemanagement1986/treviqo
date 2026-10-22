@@ -40,4 +40,4 @@ GET /api/paymate/tls-check?secret=<your-secret>
 
 Server routes should use `getPaymateHttpsAgent()` from `src/lib/paymate/tls.ts` for HTTPS calls to PayMate so TLS uses the updated certificate.
 
-Checkout UI (UPI / gateway) is still separate — enable `CheckoutForm` gateway flow once create-order / callback routes are added.
+Checkout uses PayMate (`CheckoutForm` → `/api/paymate/create-order`). Success: `/paymate-return` + `/api/paymate/callback`. Merchant portal handoff: `docs/PAYMATE_COLLEAGUE_HANDOFF.md`.

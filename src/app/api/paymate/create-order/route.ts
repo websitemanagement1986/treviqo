@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
       invoiceAmount: total,
       paymentMode: paymateMethod.PaymentMode,
       paymentType: paymateMethod.PaymentType,
+      includeIntentFields: paymateMethod.includeIntentFields,
       returnUrl,
     });
 

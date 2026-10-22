@@ -1,14 +1,51 @@
 import { encryptRequest, decryptPayload } from "@/lib/paymate/crypto";
 import { getPaymateConfig, type PaymateConfig } from "@/lib/paymate/config";
 
-function getDetailedSummary(payload: Record<string, unknown> | null | undefined) {
-  if (Array.isArray(payload?.DetailedSummary)) {
-    return (payload.DetailedSummary[0] as Record<string, unknown>) || null;
+function getDetailedSummaryRows(
+  payload: Record<string, unknown> | null | undefined,
+): Record<string, unknown>[] {
+  const raw = payload?.DetailedSummary;
+  if (Array.isArray(raw)) {
+    return raw.filter((row): row is Record<string, unknown> => row && typeof row === "object");
   }
-  return (payload?.DetailedSummary as Record<string, unknown>) || (payload?.Response as Record<string, unknown>) || null;
+  if (raw && typeof raw === "object") {
+    return [raw as Record<string, unknown>];
+  }
+  const response = payload?.Response;
+  if (response && typeof response === "object") {
+    return [response as Record<string, unknown>];
+  }
+  return [];
+}
+
+function getDetailedSummary(payload: Record<string, unknown> | null | undefined) {
+  const rows = getDetailedSummaryRows(payload);
+  return rows[0] || null;
+}
+
+function rowPaymentUrl(row: Record<string, unknown> | null | undefined): string | null {
+  if (!row) return null;
+  const candidates = [row.PaymentURL, row.PaymentUrl, row.IntentURL, row.IntentUrl];
+  const hit = candidates.find((value) => typeof value === "string" && value.length > 0);
+  return (hit as string) || null;
+}
+
+function isFailedTransactionStatus(status: unknown): boolean {
+  const code = String(status ?? "").trim();
+  return code === "999" || code === "998" || code === "99";
 }
 
 export function extractPaymateMessage(payload: Record<string, unknown> | null | undefined): string | null {
+  const rows = getDetailedSummaryRows(payload);
+  for (const row of rows) {
+    const statusMessage = String(row.StatusMessage || row.Message || "").trim();
+    const txnStatus = row.TransactionStatus;
+    const hasUrl = Boolean(rowPaymentUrl(row));
+    if (statusMessage && (isFailedTransactionStatus(txnStatus) || !hasUrl)) {
+      return statusMessage;
+    }
+  }
+
   const summary = getDetailedSummary(payload);
   const detail = (summary?.StatusMessage || summary?.Message) as string | undefined;
   const generic = (payload?.Description || payload?.ErrorDescription) as string | undefined;
@@ -16,8 +53,8 @@ export function extractPaymateMessage(payload: Record<string, unknown> | null | 
     return detail;
   }
   return (
-    generic ||
     detail ||
+    generic ||
     (payload?.message as string) ||
     (payload?.error as string) ||
     null
@@ -31,12 +68,20 @@ export function extractPaymentUrl(payload: Record<string, unknown> | null | unde
   const candidates = [
     response?.PaymentURL,
     response?.PaymentUrl,
+    response?.IntentURL,
+    response?.IntentUrl,
     summary?.PaymentURL,
     summary?.PaymentUrl,
+    summary?.IntentURL,
+    summary?.IntentUrl,
     detailed?.PaymentURL,
     detailed?.PaymentUrl,
+    detailed?.IntentURL,
+    detailed?.IntentUrl,
     payload?.PaymentURL,
     payload?.PaymentUrl,
+    payload?.IntentURL,
+    payload?.IntentUrl,
     payload?.CheckoutURL,
     payload?.checkoutUrl,
   ];
@@ -44,11 +89,22 @@ export function extractPaymentUrl(payload: Record<string, unknown> | null | unde
 }
 
 export function isSuccessPayload(payload: Record<string, unknown> | null | undefined): boolean {
+  const paymentUrl = extractPaymentUrl(payload);
+  if (paymentUrl) return true;
+
+  const rows = getDetailedSummaryRows(payload);
+  if (rows.length > 0) {
+    const anyUrl = rows.some((row) => rowPaymentUrl(row));
+    const anyHardFail = rows.some((row) => isFailedTransactionStatus(row.TransactionStatus));
+    if (anyHardFail && !anyUrl) return false;
+    if (anyUrl) return true;
+    return false;
+  }
+
   const code = String(
     payload?.StatusCode || payload?.ErrorCode || payload?.statusCode || payload?.errorCode || ""
   );
   if (code === "000" || code === "0") return true;
-  if (extractPaymentUrl(payload)) return true;
   const description = String(payload?.Description || payload?.ErrorDescription || "").toLowerCase();
   return description.includes("success");
 }

@@ -2,17 +2,21 @@ export const PAYMATE_METHODS = {
   upi: {
     label: "UPI",
     PaymentMode: "UPI",
-    PaymentType: "Intent",
+    /** Website checkout: hosted PayMate page (QR / VPA). Intent needs mobile app + TargetApp. */
+    PaymentType: "QRCode",
+    includeIntentFields: false,
   },
   debit: {
     label: "Debit Card",
     PaymentMode: "DebitCard",
     PaymentType: "Card",
+    includeIntentFields: false,
   },
   netbanking: {
     label: "Net Banking",
     PaymentMode: "NetBanking",
     PaymentType: "Banking",
+    includeIntentFields: false,
   },
 } as const;
 

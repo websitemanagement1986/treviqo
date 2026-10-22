@@ -120,7 +120,8 @@ export async function runPaymateDebug(debugKey?: string | null) {
       referenceCode: config.referenceCode,
       invoiceAmount: 1,
       paymentMode: "UPI",
-      paymentType: "Intent",
+      paymentType: "QRCode",
+      includeIntentFields: false,
     });
 
     const t0 = Date.now();
