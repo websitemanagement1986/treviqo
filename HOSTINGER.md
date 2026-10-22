@@ -44,12 +44,15 @@ PAYMATE_API_VERSION=v2
 PAYMATE_COMPANY_NAME=Treviqo Traders (OPC) Pvt Ltd
 PAYMATE_REFERENCE_CODE=TREVIQO01
 PAYMATE_PUBLIC_CERT_PATH=certs/paymate-public.cer
+PAYMATE_CERT_PATH=certs/paymate.in.crt
 PAYMATE_PARTNER_PRIVATE_KEY_B64=<run node scripts/print-paymate-private-key-env.js locally>
 PAYMATE_PARTNER_API_KEY=<long random secret shared with external partner>
 RESEND_API_KEY=<your Resend key>
 FROM_EMAIL=orders@treviqo.co.in
 ADMIN_EMAIL=support@treviqo.co.in
 ```
+
+Use **Node.js Web App** (not static `build:hostinger` export) for PayMate API routes. TLS cert notes: `docs/PAYMATE.md`. Verify after deploy: `GET /api/paymate/tls-check`.
 
 **PayMate URLs to register:**
 - Callback: `https://treviqo.co.in/api/paymate/callback`
@@ -74,6 +77,7 @@ ADMIN_EMAIL=support@treviqo.co.in
 - `GET /api/paymate/debug-status` — list recent pending orders
 - `GET /api/paymate/debug-status?orderId=TRV...` — local pending + PayMate status inquiry (full request/response)
 - Also works: `GET /api/paymate/debug?orderId=TRV...` (same as debug-status)
+- `GET /api/paymate/tls-check` — PayMate TLS certificate loaded and HTTPS probe OK
 
 ### 4. Redeploy
 - Click **Redeploy** or **Clear cache & redeploy**
